@@ -235,6 +235,66 @@ Execution rules:
 Every requirement REQ-001–REQ-053 and NFR-001–NFR-008 maps to at least one
 task through its `_Requirements_` line.
 
+### Implementation evidence (2026-11-06, branch `feature/spec-002-event-discovery`)
+
+Progress record only; scope, requirements and design are unchanged.
+Everything ran on Windows 11 against a disposable local Supabase stack
+(CLI 3.0.0, Docker Desktop). Nothing was applied to the hosted project
+`vozitoaqntixingqwuiw` and nothing was deployed.
+
+| Task | State | Evidence | Open |
+|---|---|---|---|
+| 1 | Partly done | supabase-js 2.x and CLI 3.0.0 syntax confirmed; native URL polyfill added (`src/lib/url-polyfill.native.ts`); Docker Desktop runs the stack on Windows 11; D23 resolved (below) | Hermes `Intl` `timeZone` on a device; Spec 001 v0.4 is not merged yet, so this branch is stacked on `docs/mova-platform-decisions` |
+| 2 | Done | Clean `npm ci`; `npm audit --omit=dev --audit-level=high` exit 0 (low and moderate advisories only); `npm run check` exit 0 | — |
+| 3 | Done | `supabase/config.toml` (`project_id = "mova"`), `.env.example`, README; `.env.local` is gitignored | — |
+| 4 | **Blocked** | Needs CEO authorization and the database password (operator step) | Baseline pull; re-run tasks 5–10 on top of it |
+| 5–7 | Done on an empty local database | `db:reset` applies all four migrations and the seed | Re-check against the task 4 baseline |
+| 8 | Done | `supabase test db`: 2 files, 52 tests, PASS; policy mutation check below | — |
+| 9 | Done | REST with the local publishable key returns only visible Da Nang events; anonymous insert returns 401 | — |
+| 10 | Done | `src/lib/database.types.ts` is raw CLI output; CI diffs it against a fresh generation | — |
+| 11 | Done | Config tests in `__tests__/events/data.test.ts`; `check-live-env` exits 1 without a URL (S24) | — |
+| 12 | Done | Tokens, primitives, contrast test; ESLint blocks cross-feature imports (A5) | — |
+| 13–15 | Done | Jest suites under `__tests__/events/` and the i18n tests | VI and RU need native-speaker review |
+| 16 | Done | `web.output: "server"`, `api/index.js`, `vercel.json`; `ssr:smoke` passes | — |
+| 17 | Done | Discover with sample and local Supabase data; web screenshots taken locally | Device screenshots (M1, M2) |
+| 18 | Done | Loader, metadata, details screen; `ssr:smoke` covers 200, 404 and loader data | — |
+| 19 | Done locally | CI `database` job, SSR smoke and bundle scan; planted-key check below | CI green on the PR |
+| 20 | Partly done | Lint clean; M6 covered by `ssr:smoke` | M1–M5, M7–M12 need devices, a tunnel or an approved preview |
+
+**Results.** Jest 7 suites, 102 tests; pgTAP 52 tests; `ssr:smoke` 6 checks
+(`/` 200, `/events/beach-social-001` 200 with `og:title`,
+`/events/does-not-exist` 404 "Event not available", `/no-such-page` 404,
+loader data `found` and `not_available` with HTTP 200); typecheck and lint
+(`--max-warnings 0`) clean; generated types match the migrations; metadata
+escaping test (quotes, `&` and `<script>` in a title) passes.
+
+**Negative checks (run locally, not committed).**
+
+- Policy mutation (task 8): adding `'draft'` to `events_read_visible` makes
+  pgTAP fail tests 10, 11 and 23 ("sees only published and cancelled",
+  "cannot read a draft by slug"); restored, 52 of 52 pass.
+- Planted key (task 19): a fake `sb_secret_…` file in `dist/client` makes
+  `check:bundle` exit 1; removed, exit 0.
+- Live config (S24): `check-live-env` exits 1 without a URL and exits 1 for
+  an `sb_secret_` key.
+- Feature boundary (A5): a probe importing `@/features/events` from
+  `src/lib` fails lint.
+
+**D22 decision.** The loader returns data (`found`, `not_available` or
+`error`) and never throws, with one exception: in the production server, a
+direct page request (a browser or link-preview crawler, so not
+`Accept: application/json`) for a slug that is not visible gets the
+localized "Event not available" page with HTTP 404 (REQ-017). Reasons: the
+router's in-app loader fetch fails on any non-2xx status, and the Expo dev
+server turns a thrown `Response` into HTTP 500. During in-app navigation and
+in `expo start`, the screen shows the in-app "Event not available" state
+without another request. If the server cannot reach the Data API, the
+loader returns `error` and the browser retries through the repository.
+
+**D23 decision.** Native builds have no server loader: `use-route-event.ts`
+returns `null` and the screen loads through `EventRepository`; web uses
+`useLoaderData()` (`use-route-event.web.ts`).
+
 ## Change Log
 
 | Version | Date | Author | Summary |
@@ -245,6 +305,7 @@ task through its `_Requirements_` line.
 | 0.4 | 2026-11-06 | Claude Code | CEO platform decision: cities migration and tests (tasks 5, 8), default-city config (task 11), city-aware repository (task 13), time logic by IANA zone with UTC+09:00 and daylight-saving tests (task 14), Hermes `timeZone` check (task 1). Still DRAFT |
 | 0.4 (review) | 2026-11-06 | Claude Code | Consistency review: `registration_url` column and tests (tasks 5, 8); `RegisterButton` and S34 (task 18); events of inactive cities unreadable. Still DRAFT |
 | 0.4 (approval) | 2026-11-06 | Claude Code (recording only) | Approved by the CEO on 2026-11-06; implementation authorized on `feature/spec-002-event-discovery` (local disposable database only) |
+| 0.4 (progress) | 2026-11-06 | Claude Code (recording only) | Implementation evidence, D22 and D23 decisions recorded; no scope change |
 
 **This document is APPROVED (v0.4, CEO, 2026-11-06). Any change requires a
 spec amendment with a new version and fresh CEO approval.**
