@@ -1,11 +1,11 @@
 # Spec 001: Project Foundation — Tasks
 ## Status: APPROVED
-## Version: 0.3
+## Version: 0.4
 ## Approved by: CEO
 ## Approved on: 2026-11-06
 
-Requirements reference: `requirements.md` v0.3 — Status: APPROVED by CEO on 2026-11-06
-Design reference: `design.md` v0.3 — Status: APPROVED by CEO on 2026-11-06
+Requirements reference: `requirements.md` v0.4 — Status: APPROVED by CEO on 2026-11-06
+Design reference: `design.md` v0.4 — Status: APPROVED by CEO on 2026-11-06
 
 ---
 
@@ -19,6 +19,21 @@ Design reference: `design.md` v0.3 — Status: APPROVED by CEO on 2026-11-06
 - Do not modify approved requirements or design without a spec amendment.
 - Stop and raise an amendment if any task reveals an incompatibility with the
   design.
+
+---
+
+## Amendment v0.4 — Expo SDK 58 and MOVA rebrand (CEO-approved 2026-11-06)
+
+Branch `feature/spec-001-sdk58-mova`. Reuses the validated SDK 58 trial (design §0.2).
+
+| Task | Work | Acceptance | Status |
+|---|---|---|---|
+| A-001 | Upgrade Expo SDK 57 → 58 and the test/lint tooling per design §0.2; regenerate the lockfile | Clean `npm ci` exit 0; `npx expo install --check` clean; no invalid peers | Pending |
+| A-002 | SDK 58 code changes: `await render()` in tests; `useColorScheme()` `null` handling | `npm run check` exit 0 | Pending |
+| A-003 | Security gate: `npm audit --omit=dev --audit-level=high` exits 0; CI audit step becomes blocking; ADR-0006 RESOLVED | Audit output recorded | Pending |
+| A-004 | `npx expo-doctor@latest` | Passes, or findings recorded | Pending |
+| A-005 | MOVA rebrand: app name, slug and scheme `mova`, package name, EN/VI/RU strings, `AppColors`, docs and steering | No "Vybe" left outside history, changelogs and the repository URL; tests updated | Pending |
+| A-006 | Secret scans and Draft PR to `master` | All three scans exit 0; CI green on the PR | Pending |
 
 ---
 
@@ -541,8 +556,9 @@ All 9 functional requirements and 5 NFRs are covered by at least one task.
 | 0.2 | 2026-11-06 | Claude Code (CEO-authorized remediation) | T-009/T-010/T-012 aligned with implementation: gitleaks `dir`/`git` scripts, CI on `master` |
 | 0.3 | 2026-11-06 | Claude Code (CEO-authorized) | Alignment table for approved requirements v0.3. Still DRAFT, pending CEO ratification |
 | 0.3 (approval) | 2026-11-06 | Claude Code (recording only) | CEO approval of tasks v0.3 recorded on CEO instruction |
+| 0.4 | 2026-11-06 | Claude Code (CEO-approved amendment) | Amendment tasks A-001 to A-006 for Expo SDK 58 and the MOVA rebrand. Approved by the CEO on 2026-11-06 |
 
 ---
 
-**This document is APPROVED (v0.3, CEO, 2026-11-06). Any change requires a
+**This document is APPROVED (v0.4, CEO, 2026-11-06). Any change requires a
 spec amendment with a new version and fresh CEO approval.**

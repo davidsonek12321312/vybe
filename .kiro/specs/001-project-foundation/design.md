@@ -1,10 +1,10 @@
 # Spec 001: Project Foundation — Design
 ## Status: APPROVED
-## Version: 0.3
+## Version: 0.4
 ## Approved by: CEO
 ## Approved on: 2026-11-06
 
-Requirements reference: `requirements.md` v0.3 — Status: APPROVED by CEO on 2026-11-06
+Requirements reference: `requirements.md` v0.4 — Status: APPROVED by CEO on 2026-11-06
 
 ---
 
@@ -46,6 +46,23 @@ change only.
 | REQ-008(a) | `.gitignore` per §9.1, including `!.env.example` | §9.1 |
 | REQ-008(b) | `npm run scan:secrets:staged` (staged) plus `npm run scan:secrets` and `scan:secrets:history` (tree, history) | §9.2 |
 | REQ-008(c) | Selected gate: versioned pre-commit hook `.githooks/pre-commit`, enabled by `npm install` and failing closed without gitleaks, **plus** the CI `secrets` job as a required status check on `master` (branch protection set by the repository owner) | §9.2, §11 |
+
+### 0.2 Amendment v0.4 — Expo SDK 58 and MOVA (CEO-approved 2026-11-06)
+
+Where this table conflicts with later sections, this table governs.
+
+| Area | v0.3 | v0.4 | Why |
+|---|---|---|---|
+| Expo SDK | 57 | 58 (`expo` ~58.0.23, `expo-router` ~58.0.30) | Removes the three high `decode-uri-component` advisories (ADR-0006); store Expo Go targets SDK 58 |
+| React Native / React | 0.86.3 / 19.2.3 | 0.88.1 / 19.3.0 | Set by SDK 58 |
+| Node.js | 22 LTS | 22 LTS at ≥ 22.13 (`.nvmrc` 22) | SDK 58 engines `^22.13.0 \|\| ^24.3.0 \|\| ^26.0.0` |
+| Test tooling | RNTL 13 + `react-test-renderer` | RNTL 14 + `test-renderer` 1.x; `render()` is async, so tests `await` it | `expo-router` 58 peer requirement |
+| Presets | `jest-expo` 57, `eslint-config-expo` 57 | 58 versions; `@react-native/jest-preset` 0.88; `@types/react` 19.3 | Match the SDK |
+| Theme hook | `'unspecified'` colour scheme | React Native 0.88 returns `null`; treated as light | Type change |
+| Web output | `static` | `static`, kept explicitly (the SDK 58 default is `server`) | REQ-004(d). Server rendering arrives with Spec 002 (ADR-0009) |
+| CI audit | Warning only | Blocking at `--audit-level=high` | ADR-0006 resolved |
+| Product name | Vybe | MOVA; Expo `slug` and URL scheme `mova` | ADR-0008 |
+| Upgrade method | — | Set all versions, delete `node_modules` and `package-lock.json`, run `npm install`. `expo install --fix` alone fails with ERESOLVE on the old tree | Validated trial, 2026-11-06 |
 
 ---
 
@@ -268,8 +285,8 @@ Minimum keys required for the foundation shell:
 
 | Key | EN value |
 |-----|---------|
-| `app.name` | `"Vybe"` |
-| `home.title` | `"Welcome to Vybe"` |
+| `app.name` | `"MOVA"` |
+| `home.title` | `"Welcome to MOVA"` |
 | `home.tagline` | `"Discover what's happening in Da Nang"` |
 | `home.comingSoon` | `"Events in Da Nang are coming soon."` |
 | `notFound.title` | `"Page not found"` |
@@ -641,8 +658,9 @@ Additionally:
 | 0.2 | 2026-11-06 | Claude Code (CEO-authorized remediation) | Reconciled with implementation (§0): Jest, typegen, `/_sitemap` disabled, ESLint override (ADR-0005), extended `.gitignore`, gitleaks 8.30.1 config and pinned CI binary (ADR-0007), CI on `master`, accepted audit advisories (ADR-0006), Expo Go/SDK 58 check pending. Still DRAFT |
 | 0.3 | 2026-11-06 | Claude Code (CEO-authorized) | Aligned with approved requirements v0.3 (§0.1): no event data and coming-soon line (REQ-005), deterministic English fallback with development reporting (REQ-006), invalid-route type test (REQ-003), lint fails on warnings (REQ-004b), pre-commit hook plus required PR check (REQ-008c), manual checklist (NFR-005), static-host not-found note. Still DRAFT, pending CEO ratification |
 | 0.3 (approval) | 2026-11-06 | Claude Code (recording only) | CEO approval of design v0.3 recorded on CEO instruction |
+| 0.4 | 2026-11-06 | Claude Code (CEO-approved amendment) | Expo SDK 58 upgrade and MOVA rebrand (§0.2); ADR-0006 resolution path; ADR-0008 to ADR-0010. Approved by the CEO on 2026-11-06 |
 
 ---
 
-**This document is APPROVED (v0.3, CEO, 2026-11-06). Any change requires a
+**This document is APPROVED (v0.4, CEO, 2026-11-06). Any change requires a
 spec amendment with a new version and fresh CEO approval.**
