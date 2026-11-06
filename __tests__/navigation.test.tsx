@@ -12,14 +12,17 @@
 
 // expo-localization is mocked globally in jest.setup.js
 
-// Mock expo-router — factory must not reference out-of-scope variables
-jest.mock('expo-router', () => ({
-  Link: 'Link',
-  Stack: {
-    Screen: 'Stack.Screen',
-  },
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
-}));
+jest.mock('expo-router', () => {
+  const ReactActual = jest.requireActual<typeof import('react')>('react');
+  const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
+  return {
+    // The native Link renders text; test-renderer rejects text outside <Text>.
+    Link: ({ children, accessibilityLabel }: { children?: React.ReactNode; accessibilityLabel?: string }) =>
+      ReactActual.createElement(Text, { accessibilityLabel }, children),
+    Stack: { Screen: () => null },
+    useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
+  };
+});
 
 // Mock expo-splash-screen
 jest.mock('expo-splash-screen', () => ({
@@ -40,34 +43,34 @@ import HomeScreen from '../src/app/index';
 import NotFoundScreen from '../src/app/+not-found';
 
 describe('HomeScreen', () => {
-  test('renders without throwing (REQ-002)', () => {
-    expect(() => render(<HomeScreen />)).not.toThrow();
+  test('renders without throwing (REQ-002)', async () => {
+    await render(<HomeScreen />);
   });
 
-  test('renders the app title', () => {
-    const { getByText } = render(<HomeScreen />);
+  test('renders the app title', async () => {
+    const { getByText } = await render(<HomeScreen />);
     expect(getByText('Welcome to Vybe')).toBeTruthy();
   });
 
-  test('shows the coming-soon message and no event, RSVP or sample content (REQ-005)', () => {
-    const { getByText, queryByText } = render(<HomeScreen />);
+  test('shows the coming-soon message and no event, RSVP or sample content (REQ-005)', async () => {
+    const { getByText, queryByText } = await render(<HomeScreen />);
     expect(getByText('Events in Da Nang are coming soon.')).toBeTruthy();
     expect(queryByText(/rsvp|book|sample|attend/i)).toBeNull();
   });
 });
 
 describe('NotFoundScreen', () => {
-  test('renders without throwing (REQ-003)', () => {
-    expect(() => render(<NotFoundScreen />)).not.toThrow();
+  test('renders without throwing (REQ-003)', async () => {
+    await render(<NotFoundScreen />);
   });
 
-  test('renders the not-found title', () => {
-    const { getByText } = render(<NotFoundScreen />);
+  test('renders the not-found title', async () => {
+    const { getByText } = await render(<NotFoundScreen />);
     expect(getByText('Page not found')).toBeTruthy();
   });
 
-  test('contains a "Go to home" link element (REQ-003)', () => {
-    const { getByLabelText } = render(<NotFoundScreen />);
+  test('contains a "Go to home" link element (REQ-003)', async () => {
+    const { getByLabelText } = await render(<NotFoundScreen />);
     // The Link renders with accessibilityLabel="Go to home" (from i18n key)
     expect(getByLabelText('Go to home')).toBeTruthy();
   });

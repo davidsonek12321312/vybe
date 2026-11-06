@@ -1,7 +1,7 @@
 # Vybe
 
 Mobile-first social discovery for real-world events, launching in Da Nang,
-Vietnam. Built with Expo (SDK 57), React Native, TypeScript and Expo Router
+Vietnam. Built with Expo (SDK 58), React Native, TypeScript and Expo Router
 for Android, iOS and web.
 
 > **Status:** Spec 001 (Project Foundation) is implemented and in review.
@@ -13,11 +13,11 @@ for Android, iOS and web.
 
 | Tool | Version | Install |
 |---|---|---|
-| Node.js | 22 LTS (see `.nvmrc`) | `winget install CoreyButler.NVMforWindows`, then `nvm install 22` and `nvm use 22` |
+| Node.js | 22 LTS, 22.13 or later (see `.nvmrc`) | `winget install CoreyButler.NVMforWindows`, then `nvm install 22` and `nvm use 22` |
 | npm | bundled with Node 22 | — |
 | Git | current | `winget install Git.Git` |
 | gitleaks | 8.30.1 | `winget install Gitleaks.Gitleaks`, or download `gitleaks_8.30.1_windows_x64.zip` from <https://github.com/gitleaks/gitleaks/releases> and add `gitleaks.exe` to `PATH` |
-| Expo Go | for SDK 57 | Android: Play Store · iOS: App Store (see [Expo Go and SDK versions](#expo-go-and-sdk-versions)) |
+| Expo Go | for SDK 58 | Android: Play Store · iOS: App Store (see [Expo Go and SDK versions](#expo-go-and-sdk-versions)) |
 
 Run all commands from the repository root in PowerShell or Git Bash.
 
@@ -56,12 +56,9 @@ testing uses Expo Go.
 
 ### Expo Go and SDK versions
 
-Store versions of Expo Go follow the newest Expo SDK, and SDK 58 is now
-available. If Expo Go says this SDK 57 project is incompatible:
-
-- **Android:** install the Expo Go build for SDK 57 from <https://expo.dev/go>.
-- **iOS:** test on web (`w`) for now. Moving to SDK 58 is a planned spec
-  amendment.
+This project uses Expo SDK 58. Store versions of Expo Go follow the newest
+SDK. If Expo Go says the project is incompatible, update Expo Go from the
+store, or install the SDK 58 build from <https://expo.dev/go> (Android).
 
 ## Verify changes (same as CI)
 
@@ -116,11 +113,12 @@ docs/             Product vision, SDD workflow, decisions (ADRs)
 - `eslint-plugin-react-native-a11y` officially supports ESLint ≤ 8. A scoped
   `overrides` entry in `package.json` lets it run with ESLint 9
   (`docs/DECISIONS.md`, ADR-0005).
-- `npm audit` reports 3 high advisories in `expo-router` 57 (via
-  `decode-uri-component`). They are accepted for development only and
-  must be fixed before any public event link or production release
-  (ADR-0006). **Never run `npm audit fix --force`**: it would downgrade Expo
-  to SDK 52.
+- The Expo SDK 58 upgrade removed the high `npm audit` advisories in
+  `expo-router` 57 (ADR-0006). CI now fails on any high-severity advisory in
+  production dependencies. **Never run `npm audit fix --force`**: it can
+  downgrade Expo.
+- Tests use React Native Testing Library 14, where `render()` is async:
+  always `await render(...)`.
 
 ## How we work: Spec-Driven Development
 

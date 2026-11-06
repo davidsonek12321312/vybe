@@ -5,10 +5,17 @@
  * - A key missing from VI or RU shows English without crashing
  * - The missing key is reported in development (once per locale and key)
  */
-jest.mock('expo-router', () => ({
-  Link: 'Link',
-  Stack: { Screen: 'Stack.Screen' },
-}));
+jest.mock('expo-router', () => {
+  const ReactActual = jest.requireActual<typeof import('react')>('react');
+  const { Text } = jest.requireActual<typeof import('react-native')>('react-native');
+  return {
+    // The native Link renders text; test-renderer rejects text outside <Text>.
+    Link: ({ children, accessibilityLabel }: { children?: React.ReactNode; accessibilityLabel?: string }) =>
+      ReactActual.createElement(Text, { accessibilityLabel }, children),
+    Stack: { Screen: () => null },
+    useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
+  };
+});
 
 jest.mock('react-native-safe-area-context', () => ({
   SafeAreaView: 'SafeAreaView',
@@ -30,16 +37,16 @@ afterEach(() => {
 });
 
 describe.each([...SUPPORTED_LOCALES])('shell screens in "%s" (REQ-006)', (locale: Locale) => {
-  test('home shows the locale strings', () => {
+  test('home shows the locale strings', async () => {
     setLocale(locale);
-    const { getByText } = render(<HomeScreen />);
+    const { getByText } = await render(<HomeScreen />);
     expect(getByText(dictionaries[locale].home.title)).toBeTruthy();
     expect(getByText(dictionaries[locale].home.comingSoon)).toBeTruthy();
   });
 
-  test('not-found shows the locale strings', () => {
+  test('not-found shows the locale strings', async () => {
     setLocale(locale);
-    const { getByText, getByLabelText } = render(<NotFoundScreen />);
+    const { getByText, getByLabelText } = await render(<NotFoundScreen />);
     expect(getByText(dictionaries[locale].notFound.title)).toBeTruthy();
     expect(getByLabelText(dictionaries[locale].notFound.goHome)).toBeTruthy();
   });
@@ -52,7 +59,7 @@ describe('English fallback (REQ-006, Scenario 5)', () => {
     ru: { ...ru, home: {} },
   };
 
-  test.each(['vi', 'ru'] as const)('a key missing in "%s" shows English and is reported', (locale) => {
+  test.each(['vi', 'ru'] as const)('a key missing in "%s" shows English and is reported', async (locale) => {
     const report = jest.fn();
     const translator = createTranslator(incomplete, locale, report);
 
@@ -60,7 +67,7 @@ describe('English fallback (REQ-006, Scenario 5)', () => {
     expect(report).toHaveBeenCalledWith(locale, 'home.tagline');
   });
 
-  test('a key present in the active locale is used and not reported', () => {
+  test('a key present in the active locale is used and not reported', async () => {
     const report = jest.fn();
     const translator = createTranslator(incomplete, 'vi', report);
 
@@ -68,7 +75,7 @@ describe('English fallback (REQ-006, Scenario 5)', () => {
     expect(report).not.toHaveBeenCalled();
   });
 
-  test('the development reporter warns once per missing key', () => {
+  test('the development reporter warns once per missing key', async () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const translator = createTranslator(incomplete, 'ru');
 
