@@ -6,10 +6,10 @@
  */
 const en = {
   app: {
-    name: 'Vybe',
+    name: 'MOVA',
   },
   home: {
-    title: 'Welcome to Vybe',
+    title: 'Welcome to MOVA',
     tagline: "Discover what's happening in Da Nang",
     comingSoon: 'Events in Da Nang are coming soon.',
   },

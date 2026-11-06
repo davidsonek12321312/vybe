@@ -1,4 +1,4 @@
-# Vybe
+# MOVA
 
 Mobile-first social discovery for real-world events, launching in Da Nang,
 Vietnam. Built with Expo (SDK 58), React Native, TypeScript and Expo Router
@@ -24,8 +24,8 @@ Run all commands from the repository root in PowerShell or Git Bash.
 ## Set up
 
 ```powershell
-git clone <repository-url> vybe
-cd vybe
+git clone <repository-url> mova
+cd mova
 nvm use 22
 npm ci
 ```

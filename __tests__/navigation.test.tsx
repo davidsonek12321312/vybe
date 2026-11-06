@@ -49,7 +49,7 @@ describe('HomeScreen', () => {
 
   test('renders the app title', async () => {
     const { getByText } = await render(<HomeScreen />);
-    expect(getByText('Welcome to Vybe')).toBeTruthy();
+    expect(getByText('Welcome to MOVA')).toBeTruthy();
   });
 
   test('shows the coming-soon message and no event, RSVP or sample content (REQ-005)', async () => {

@@ -1,5 +1,5 @@
 /**
- * Vybe i18n module — Spec 001 REQ-006 (requirements v0.3)
+ * MOVA i18n module — Spec 001 REQ-006 (requirements v0.3)
  *
  * Every user-facing string resolves through this layer and the locale files
  * in ./locales/. Supported locales: EN, VI, RU.
