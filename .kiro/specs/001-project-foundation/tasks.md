@@ -28,12 +28,12 @@ Branch `feature/spec-001-sdk58-mova`. Reuses the validated SDK 58 trial (design 
 
 | Task | Work | Acceptance | Status |
 |---|---|---|---|
-| A-001 | Upgrade Expo SDK 57 → 58 and the test/lint tooling per design §0.2; regenerate the lockfile | Clean `npm ci` exit 0; `npx expo install --check` clean; no invalid peers | Pending |
-| A-002 | SDK 58 code changes: `await render()` in tests; `useColorScheme()` `null` handling | `npm run check` exit 0 | Pending |
-| A-003 | Security gate: `npm audit --omit=dev --audit-level=high` exits 0; CI audit step becomes blocking; ADR-0006 RESOLVED | Audit output recorded | Pending |
-| A-004 | `npx expo-doctor@latest` | Passes, or findings recorded | Pending |
-| A-005 | MOVA rebrand: app name, slug and scheme `mova`, package name, EN/VI/RU strings, `AppColors`, docs and steering | No "Vybe" left outside history, changelogs and the repository URL; tests updated | Pending |
-| A-006 | Secret scans and Draft PR to `master` | All three scans exit 0; CI green on the PR | Pending |
+| A-001 | Upgrade Expo SDK 57 → 58 and the test/lint tooling per design §0.2; regenerate the lockfile | Clean `npm ci` exit 0; `npx expo install --check` clean; no invalid peers | Done (8053f9b): clean `npm ci` exit 0; "Dependencies are up to date"; 0 invalid peers |
+| A-002 | SDK 58 code changes: `await render()` in tests; `useColorScheme()` `null` handling | `npm run check` exit 0 | Done (8053f9b): also mocks `Link` as `Text` for test-renderer; `npm run check` exit 0, 21/21 tests |
+| A-003 | Security gate: `npm audit --omit=dev --audit-level=high` exits 0; CI audit step becomes blocking; ADR-0006 RESOLVED | Audit output recorded | Done: exit 0 (0 high; 21 moderate, 1 low); `decode-uri-component` chain removed; CI step blocking |
+| A-004 | `npx expo-doctor@latest` | Passes, or findings recorded | Done: 20/20 checks passed |
+| A-005 | MOVA rebrand: app name, slug and scheme `mova`, package name, EN/VI/RU strings, `AppColors`, docs and steering | No "Vybe" left outside history, changelogs and the repository URL; tests updated | Done (33b4102): remaining "Vybe" only in changelogs, ADR-0008, historical setup commands and the repository folder |
+| A-006 | Secret scans and Draft PR to `master` | All three scans exit 0; CI green on the PR | Scans done (all exit 0, pre-commit hook passed on each commit); Draft PR and CI pending |
 
 ---
 
