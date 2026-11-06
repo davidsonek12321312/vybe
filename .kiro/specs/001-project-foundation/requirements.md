@@ -386,6 +386,7 @@ recorded in `design.md` before design is approved:
 | 0.3 | 2026-11-06 | ChatGPT (independent requirements review) | Clarified Expo Router special not-found route, Windows-first iOS tests, accurate accessibility criteria, deterministic localization, no events in foundation, secret-scan enforcement, additional mobile/accessibility acceptance scenarios. DRAFT pending founder approval. |
 | 0.3 (approval) | 2026-11-06 | Claude Code (recording only) | CEO approval of v0.3 recorded on CEO instruction. Requirement text is identical to the CEO-supplied v0.3 file |
 | 0.4 | 2026-11-06 | Claude Code (CEO-approved amendment) | Product renamed Vybe → MOVA (ADR-0008), including the deferred `MOVA_ENV` name. No behavioural change. Approved by the CEO on 2026-11-06 together with the Expo SDK 58 design amendment |
+| 0.4 (note) | 2026-11-06 | Claude Code (recording only) | REQ-004(d) is amended by Spec 002 REQ-047 (web export becomes Expo Router server output: client assets plus server bundle), approved by the CEO with Spec 002 v0.4 on 2026-11-06 |
 
 ---
 
