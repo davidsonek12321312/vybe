@@ -1,0 +1,30 @@
+# Gitleaks configuration for Vybe (Spec 001 REQ-008, NFR-002; ADR-0007)
+# Local:  npm run scan:secrets          (working tree)
+#         npm run scan:secrets:history  (git history)
+# CI:     .github/workflows/ci.yml, job "secrets"
+
+title = "vybe"
+
+[extend]
+# Start from the full upstream gitleaks rule set.
+useDefault = true
+
+# Supabase secret / service-role API keys must never appear anywhere in the
+# repository or in a client bundle. Publishable keys (sb_publishable_...) are
+# public by design and are not flagged.
+[[rules]]
+id = "supabase-secret-key"
+description = "Supabase secret API key (sb_secret_...)"
+regex = '''sb_secret_[A-Za-z0-9_\-]{20,}'''
+keywords = ["sb_secret_"]
+
+# Generated output and third-party code are not scanned.
+[[allowlists]]
+description = "Generated, vendored and VCS directories"
+paths = [
+  '''(^|[\\/])node_modules[\\/]''',
+  '''(^|[\\/])dist[\\/]''',
+  '''(^|[\\/])web-build[\\/]''',
+  '''(^|[\\/])\.expo[\\/]''',
+  '''(^|[\\/])\.git[\\/]''',
+]

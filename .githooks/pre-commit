@@ -1,0 +1,17 @@
+#!/bin/sh
+# Vybe pre-commit hook — Spec 001 REQ-008(c).
+# Blocks the commit when gitleaks finds a secret in the staged changes.
+# Installed by `npm install` (prepare script) or `npm run hooks:install`.
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks is not installed, so staged changes cannot be scanned." >&2
+  echo "pre-commit: install it (winget install Gitleaks.Gitleaks) and commit again." >&2
+  exit 1
+fi
+
+gitleaks git . --pre-commit --staged --config .gitleaks.toml --redact --no-banner
+status=$?
+if [ "$status" -ne 0 ]; then
+  echo "pre-commit: commit blocked. Remove the secret from the staged changes and rotate it if it is real." >&2
+fi
+exit "$status"
