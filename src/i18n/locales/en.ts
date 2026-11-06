@@ -1,17 +1,124 @@
 /**
- * English (EN) locale — source of truth for all translation keys.
- * All other locale files must contain the same keys.
- *
- * Keys use nested objects. Access via t('home.title') etc.
+ * English (EN) locale — source of truth for translation keys (two levels:
+ * section.key). VI and RU must provide every key; TypeScript enforces it
+ * through LocaleShape. Interpolation uses %{name}.
  */
 const en = {
   app: {
     name: 'MOVA',
+    tagline: 'Open social, starting in Da Nang',
   },
-  home: {
-    title: 'Welcome to MOVA',
-    tagline: "Discover what's happening in Da Nang",
-    comingSoon: 'Events in Da Nang are coming soon.',
+  discover: {
+    title: 'Discover',
+    subtitle: "What's on in %{city}",
+    count: 'Events: %{count}',
+    today: 'Today',
+    tomorrow: 'Tomorrow',
+    refresh: 'Refresh',
+    refreshing: 'Refreshing…',
+    sampleBanner: 'Preview: these are sample events, not real ones.',
+  },
+  filters: {
+    date: 'Date',
+    any: 'Any date',
+    today: 'Today',
+    tomorrow: 'Tomorrow',
+    weekend: 'This weekend',
+    next7: 'Next 7 days',
+    category: 'Category',
+    language: 'Language',
+    price: 'Price',
+    priceAny: 'Any price',
+    free: 'Free',
+    paid: 'Paid',
+    solo: 'Solo-friendly',
+    clearAll: 'Clear all',
+    apply: 'Apply',
+    reset: 'Reset',
+    close: 'Close',
+    sheetHint: 'Choose one or more',
+    active: 'Filters: %{count}',
+  },
+  category: {
+    social: 'Social & Meetups',
+    beach_outdoors: 'Beach & Outdoors',
+    sports_fitness: 'Sports & Fitness',
+    food_drink: 'Food & Drink',
+    language_exchange: 'Language Exchange',
+    arts_culture: 'Arts & Culture',
+    workshops: 'Workshops',
+    nightlife: 'Nightlife (18+)',
+  },
+  language: {
+    en: 'English',
+    vi: 'Vietnamese',
+    ru: 'Russian',
+    other: 'Other',
+  },
+  event: {
+    free: 'Free',
+    venueTbc: 'Venue TBC',
+    venueToBeConfirmed: 'Venue to be confirmed',
+    cityTime: '%{city} time',
+    organizer: 'By %{name}',
+    languages: 'Languages',
+    price: 'Price',
+    whatToExpect: 'What to expect',
+    about: 'About',
+    accessibility: 'Accessibility',
+    ageRestriction: '%{age}+ only',
+    lastUpdated: 'Last updated %{date}',
+    openInMaps: 'Open in Maps',
+    share: 'Share',
+    linkCopied: 'Link copied',
+    shareFailed: 'Could not share this link',
+    register: 'Register',
+    registerHint: 'Opens a MOVA team form outside the app',
+    backToEvents: 'Back to events',
+    when: 'When',
+    where: 'Where',
+    opensExternally: 'Opens outside the app',
+  },
+  status: {
+    cancelled: 'Cancelled',
+    ended: 'Event has ended',
+    updated: 'Updated',
+    updatedAt: 'Updated %{when}',
+    happeningNow: 'Happening now',
+    sample: 'Sample event, not real',
+  },
+  badge: {
+    solo: 'Solo-friendly',
+    age: '%{age}+',
+  },
+  solo: {
+    title: 'Coming alone?',
+  },
+  states: {
+    loading: 'Loading events…',
+    slow: 'Still loading…',
+    retry: 'Retry',
+    emptyTitle: 'No upcoming events yet',
+    emptyBody: 'New events are added every week.',
+    noMatchesTitle: 'No events match your filters',
+    clearFilters: 'Clear filters',
+    tryAnyDate: 'Try "Any date"',
+    offlineTitle: "You're offline",
+    offlineBody: 'Check your connection and try again.',
+    serverTitle: "Can't load events right now",
+    serverBody: 'Please try again in a moment.',
+    timeoutTitle: 'This is taking too long',
+    timeoutBody: 'The connection is slow. Please try again.',
+    configTitle: 'Service unavailable',
+    configBody: "MOVA can't connect right now. Please try again later.",
+    offlineBanner: 'Offline · last updated %{time}',
+    notAvailableTitle: 'Event not available',
+    notAvailableBody: 'This event does not exist or is no longer public.',
+  },
+  meta: {
+    siteTitle: 'MOVA — Discover events in %{city}',
+    siteDescription: 'Find real events and meet people in %{city}. Free to browse, no account needed.',
+    eventTitle: '%{title} · MOVA',
   },
   notFound: {
     title: 'Page not found',
@@ -20,17 +127,13 @@ const en = {
   },
 };
 
-// Derive the shape type from the EN locale for structural checking of other locales
-export type LocaleSection = { [key: string]: string };
-export type LocaleShape = { [K in keyof typeof en]: LocaleSection };
+type Sections = typeof en;
 
-export type TranslationKeys =
-  | 'app.name'
-  | 'home.title'
-  | 'home.tagline'
-  | 'home.comingSoon'
-  | 'notFound.title'
-  | 'notFound.body'
-  | 'notFound.goHome';
+/** Every locale must provide every key of every section. */
+export type LocaleShape = { [S in keyof Sections]: { [K in keyof Sections[S]]: string } };
+
+export type TranslationKeys = {
+  [S in keyof Sections & string]: `${S}.${keyof Sections[S] & string}`;
+}[keyof Sections & string];
 
 export default en;

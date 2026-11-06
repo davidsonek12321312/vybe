@@ -21,6 +21,40 @@ module.exports = defineConfig([
       '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
+  // Spec 002 design A5: features stay independent. Shared code lives in
+  // src/design, src/lib, src/config, src/i18n or src/platform.
+  {
+    files: ['src/features/events/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/features/*', '!@/features/events', '!@/features/events/**'],
+              message: 'A feature must not import another feature (Spec 002 design A5).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/design/**/*.{ts,tsx}', 'src/lib/**/*.{ts,tsx}', 'src/config/**/*.{ts,tsx}', 'src/i18n/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/features/**', '**/features/**'],
+              message: 'Shared layers must not depend on features (Spec 002 design A5).',
+            },
+          ],
+        },
+      ],
+    },
+  },
   {
     ignores: ['dist/*', 'web-build/*', 'node_modules/*'],
   },

@@ -57,10 +57,15 @@ describe('i18n locale completeness (REQ-006)', () => {
   });
 });
 
-describe('t() function (REQ-005)', () => {
-  test('t("home.comingSoon") returns a non-empty string', () => {
-    const result = t('home.comingSoon');
+describe('t() function', () => {
+  test('returns a non-empty string', () => {
+    const result = t('discover.title');
     expect(typeof result).toBe('string');
     expect(result.length).toBeGreaterThan(0);
+  });
+
+  test('interpolates parameters (Spec 002 NFR-001)', () => {
+    expect(t('discover.subtitle', { city: 'Da Nang' })).toBe("What's on in Da Nang");
+    expect(t('discover.count', { count: 4 })).toBe('Events: 4');
   });
 });

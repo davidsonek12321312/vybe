@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~58.0.27",
+    "@supabase/supabase-js": "^2.119.0",
     "expo": "~58.0.23",
     "expo-constants": "~58.0.15",
     "expo-device": "~58.0.5",
@@ -13,6 +14,7 @@
     "expo-linking": "~58.0.16",
     "expo-localization": "~58.0.5",
     "expo-router": "~58.0.30",
+    "expo-server": "~58.0.6",
     "expo-splash-screen": "~58.0.13",
     "expo-status-bar": "~58.0.4",
     "expo-symbols": "~58.0.4",
@@ -26,6 +28,7 @@
     "react-native-reanimated": "4.7.1",
     "react-native-safe-area-context": "~5.11.1",
     "react-native-screens": "~4.30.1",
+    "react-native-url-polyfill": "^4.0.0",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.13.0"
   },
@@ -39,6 +42,7 @@
     "eslint-plugin-react-native-a11y": "^3.5.1",
     "jest": "^30.5.2",
     "jest-expo": "~58.0.14",
+    "supabase": "3.0.0",
     "test-renderer": "^1.3.1",
     "typescript": "~6.0.3"
   },
@@ -53,17 +57,29 @@
     "lint": "expo lint --max-warnings 0",
     "test": "jest --passWithNoTests",
     "export:web": "npx expo export -p web",
-    "check": "npm run typegen && npm run typecheck && npm run test:types && npm run lint && npm run test && npm run export:web",
+    "check": "npm run typegen && npm run typecheck && npm run test:types && npm run lint && npm run test && npm run export:web && npm run ssr:smoke && npm run check:bundle",
     "scan:secrets": "gitleaks dir . --config .gitleaks.toml --redact --no-banner",
     "scan:secrets:history": "gitleaks git . --config .gitleaks.toml --redact --no-banner",
     "scan:secrets:staged": "gitleaks git . --pre-commit --staged --config .gitleaks.toml --redact --no-banner",
     "hooks:install": "node scripts/install-git-hooks.mjs",
-    "prepare": "node scripts/install-git-hooks.mjs"
+    "prepare": "node scripts/install-git-hooks.mjs",
+    "export:web:live": "node scripts/check-live-env.mjs && expo export -p web",
+    "serve:web": "expo serve",
+    "ssr:smoke": "node scripts/ssr-smoke.mjs",
+    "check:bundle": "node scripts/check-bundle-secrets.mjs",
+    "db:start": "supabase start -x realtime,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "db:types": "supabase gen types --lang=typescript --local > src/lib/database.types.ts"
   },
   "private": true,
   "overrides": {
     "eslint-plugin-react-native-a11y": {
       "eslint": "$eslint"
     }
+  },
+  "allowScripts": {
+    "supabase@3.0.0": true
   }
 }

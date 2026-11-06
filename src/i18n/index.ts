@@ -24,8 +24,10 @@ export type Dictionary = { [key: string]: string | Dictionary };
 export type Dictionaries = Record<Locale, Dictionary>;
 export type MissingKeyReporter = (locale: Locale, key: string) => void;
 
+export type TranslateParams = Record<string, string | number>;
+
 export interface Translator {
-  t(key: TranslationKeys): string;
+  t(key: TranslationKeys, params?: TranslateParams): string;
   setLocale(locale: Locale): void;
   getLocale(): Locale;
 }
@@ -67,12 +69,12 @@ export function createTranslator(
   let locale = initialLocale;
 
   return {
-    t(key) {
+    t(key, params) {
       if (locale !== FALLBACK_LOCALE && !hasTranslation(dictionaries[locale], key)) {
         reportMissing(locale, key);
-        return i18n.t(key, { locale: FALLBACK_LOCALE });
+        return i18n.t(key, { ...params, locale: FALLBACK_LOCALE });
       }
-      return i18n.t(key, { locale });
+      return i18n.t(key, { ...params, locale });
     },
     setLocale(next) {
       locale = next;
@@ -83,15 +85,24 @@ export function createTranslator(
   };
 }
 
-const deviceLanguage = getLocales()[0]?.languageCode;
+function readDeviceLanguage(): string | null {
+  try {
+    return getLocales()[0]?.languageCode ?? null;
+  } catch {
+    // Server rendering has no device locale; English is the deterministic default.
+    return null;
+  }
+}
+
+const deviceLanguage = readDeviceLanguage();
 const appTranslator = createTranslator(
   { en, vi, ru },
   isSupportedLocale(deviceLanguage) ? deviceLanguage : FALLBACK_LOCALE,
 );
 
-/** Translate a key in the active locale, falling back to English. */
-export function t(key: TranslationKeys): string {
-  return appTranslator.t(key);
+/** Translate a key in the active locale, falling back to English. Interpolates %{name}. */
+export function t(key: TranslationKeys, params?: TranslateParams): string {
+  return appTranslator.t(key, params);
 }
 
 /** Select the active locale (test harness; no UI switcher in Spec 001). */
