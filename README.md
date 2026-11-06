@@ -4,10 +4,11 @@ Mobile-first social discovery for real-world events, launching in Da Nang,
 Vietnam. Built with Expo (SDK 58), React Native, TypeScript and Expo Router
 for Android, iOS and web.
 
-> **Status:** Spec 001 (Project Foundation) is implemented and in review.
-> Requirements, design and tasks v0.3 are approved (CEO, 2026-11-06). There
-> is no live event data, account system or backend yet;
-> the home screen shows a "coming soon" message.
+> **Status:** Spec 002 (Event Discovery, v0.4, approved by the CEO on
+> 2026-11-06) is implemented on `feature/spec-002-event-discovery` and in
+> review: Discover, event details, filters, sharing and registration links,
+> on sample data or a local Supabase database. The hosted database is not
+> migrated and nothing is deployed. There are no accounts yet.
 
 ## Prerequisites (Windows 11)
 
@@ -54,6 +55,35 @@ npx expo start
 Native iOS builds need macOS and are out of scope for Spec 001; iPhone
 testing uses Expo Go.
 
+### Event data sources (Spec 002)
+
+- **Sample (default, no setup):** fictional events, clearly labelled
+  "Sample event, not real". Used when `EXPO_PUBLIC_MOVA_DATA_SOURCE` is unset.
+- **Local Supabase (real database, disposable):** needs Docker Desktop.
+
+  ```powershell
+  npm run db:start          # local Postgres + Data API; applies migrations and seed
+  copy .env.example .env.local
+  # in .env.local: EXPO_PUBLIC_MOVA_DATA_SOURCE=supabase,
+  # EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321,
+  # EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<"Publishable" key from `npx supabase status`>,
+  # EXPO_PUBLIC_ALLOW_LOCAL_SUPABASE=true
+  npx expo start --web
+  ```
+
+- **Hosted project `vozitoaqntixingqwuiw`:** publishable key only, in
+  `.env.local` or the Vercel environment. Hosted migrations need CEO approval.
+
+### Web server build (Vercel, server rendering)
+
+```powershell
+npx expo export -p web    # dist/client + dist/server
+npm run ssr:smoke         # status codes and Open Graph tags via the Vercel adapter
+npm run serve:web         # serve the server build locally
+```
+
+`vercel.json` and `api/index.js` are ready; deployments need CEO approval.
+
 ### Expo Go and SDK versions
 
 This project uses Expo SDK 58. Store versions of Expo Go follow the newest
@@ -72,13 +102,18 @@ npm run check
 | `npm run typecheck` | `tsc --noEmit` in strict mode |
 | `npm run test:types` | Checks that an invalid route fails type-checking |
 | `npm run lint` | ESLint: Expo config plus React Native accessibility rules; fails on any warning |
-| `npm test` | Jest smoke tests |
-| `npm run export:web` | Static web export to `dist/` |
+| `npm test` | Jest tests |
+| `npm run export:web` | Web server build to `dist/client` and `dist/server` |
 | `npm run check` | All of the above in order; stops at the first failure |
 | `npm run scan:secrets` | gitleaks scan of the working tree |
 | `npm run scan:secrets:history` | gitleaks scan of the git history |
 | `npm run scan:secrets:staged` | gitleaks scan of staged changes |
 | `npm run hooks:install` | Re-enables the pre-commit secret-scan hook |
+| `npm run ssr:smoke` | Server-rendering checks on `dist/server` (part of `check`) |
+| `npm run check:bundle` | Fails if a secret or service-role key is in `dist/` (part of `check`) |
+| `npm run db:start` / `db:stop` / `db:reset` | Local Supabase stack (Docker) |
+| `npm run db:test` | pgTAP tests: RLS, privileges, constraints |
+| `npm run db:types` | Regenerates `src/lib/database.types.ts` from the local database |
 
 The pre-commit hook runs the staged scan on every commit. Manual smoke and
 accessibility checks are in `docs/MANUAL_SMOKE_CHECKLIST.md`.
@@ -87,23 +122,32 @@ accessibility checks are in `docs/MANUAL_SMOKE_CHECKLIST.md`.
 
 `.github/workflows/ci.yml` runs on pull requests and pushes to `master`:
 
-- **check:** `npm ci`, typegen, typecheck, lint, tests, web export, and a
-  non-blocking `npm audit`.
+- **check:** `npm ci`, typegen, typecheck, lint, tests, web server build,
+  SSR smoke test, bundle key scan, and `npm audit` (fails on high severity).
 - **secrets:** gitleaks 8.30.1 (pinned, checksum-verified) on the working
   tree and the full git history.
+- **database:** a disposable local Supabase stack: migrations, pgTAP
+  access and constraint tests, and a generated-types drift check. It never
+  connects to the hosted project.
 
 CI never deploys, pushes or merges. The repository owner must protect `master`
-and make both jobs required status checks, so a failed secret scan blocks the
-merge.
+and make all three jobs required status checks, so a failed scan or test
+blocks the merge.
 
 ## Project layout
 
 ```
-src/app/          Expo Router routes: index (/) and +not-found
-src/components/   SampleDataBadge, themed text and view
-src/i18n/         EN / VI / RU strings and t()
-src/theme.ts      Colour tokens with contrast notes
-__tests__/        Jest smoke tests
+src/app/              Thin routes: / (Discover), /events/[slug], +not-found
+src/features/events/  Event Discovery: data access, time/filters, hooks, UI, screens
+src/design/           Premium dark tokens and primitives
+src/config/           EXPO_PUBLIC_* configuration (publishable key only)
+src/lib/              Supabase client and generated database types
+src/i18n/             EN / VI / RU strings and t()
+src/components/, src/constants/, src/hooks/, src/theme.ts
+                      Spec 001 template helpers, unused since Spec 002 (cleanup candidate)
+supabase/             Migrations, pgTAP tests, local seed, CLI config
+api/index.js          Vercel function entry (Expo Router server output)
+__tests__/            Jest tests
 .kiro/specs/      Canonical specifications (SDD)
 docs/             Product vision, SDD workflow, decisions (ADRs)
 ```

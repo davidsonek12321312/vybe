@@ -18,6 +18,12 @@ description = "Supabase secret API key (sb_secret_...)"
 regex = '''sb_secret_[A-Za-z0-9_\-]{20,}'''
 keywords = ["sb_secret_"]
 
+# Publishable keys are public by design (they ship in every client), so the
+# generic rules must not flag them, e.g. in a local .env.local.
+[[allowlists]]
+description = "Supabase publishable keys"
+regexes = ['''^sb_publishable_[A-Za-z0-9_\-]{10,}$''']
+
 # Generated output and third-party code are not scanned.
 [[allowlists]]
 description = "Generated, vendored and VCS directories"

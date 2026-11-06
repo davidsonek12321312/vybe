@@ -45,6 +45,12 @@ jobs:
       - run: npm test
       - run: npm run export:web
 
+      - name: Server-rendering smoke test (Spec 002 S28)
+        run: npm run ssr:smoke
+
+      - name: No privileged keys in the web build (Spec 002 S29)
+        run: npm run check:bundle
+
       # Blocking since the Expo SDK 58 upgrade resolved ADR-0006.
       - name: Dependency audit (high severity fails)
         run: npm audit --omit=dev --audit-level=high
@@ -77,3 +83,27 @@ jobs:
 
       - name: Scan git history
         run: gitleaks git . --config .gitleaks.toml --redact --no-banner
+
+  # Spec 002 REQ-044, REQ-045, REQ-046: migrations, RLS and type drift on a
+  # disposable local database. Never connects to the hosted project.
+  database:
+    name: Database migrations and authorization tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 3.0.0
+
+      - name: Start a disposable local Supabase stack (migrations and seed)
+        run: supabase start -x realtime,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor,studio
+
+      - name: pgTAP tests (allowed and denied access)
+        run: supabase test db
+
+      - name: Generated types match the migrations
+        run: |
+          supabase gen types --lang=typescript --local > "$RUNNER_TEMP/database.types.ts"
+          diff -u src/lib/database.types.ts "$RUNNER_TEMP/database.types.ts"
