@@ -19,7 +19,7 @@ Adults in Da Nang first, then other cities: Vietnamese locals, international tra
 
 | Module | Purpose | Status |
 |---|---|---|
-| Event discovery | Browse public events without an account | Spec 002 (DRAFT) |
+| Event discovery | Browse public events without an account | Spec 002 (approved v0.4; implemented, in review) |
 | Accounts and profiles | Sign-in (Google first; Apple and email later), public profiles separate from private data | Proposed Spec 003 |
 | RSVP | Join events, capacity, waitlists, host attendee lists | Planned |
 | Hosts | Vetted organisers, event publishing, moderation | Planned |
@@ -45,7 +45,7 @@ Adults in Da Nang first, then other cities: Vietnamese locals, international tra
 ## Roadmap
 Each item is its own governed spec (`docs/SDD_WORKFLOW.md`).
 1. Spec 001 Foundation — done; amendment v0.4 (Expo SDK 58, MOVA) in review.
-2. Spec 002 Event Discovery and Supabase — DRAFT.
+2. Spec 002 Event Discovery and Supabase — approved v0.4 (CEO, 2026-11-06); implemented on `feature/spec-002-event-discovery`, in review.
 3. **Proposed Spec 003 Accounts: Google Sign-In and Profiles** — Supabase Auth with Google; a public `profiles` table and private user data with owner-only RLS; sign-out, account deletion and data export basics; browsing stays anonymous. Prerequisite for RSVP, Hosts, the social graph and chats.
 4. RSVP and Hosts.
 5. Social graph, feeds, rooms and communities, chats, notifications, swipe, media and new cities, in an order set by the CEO.
@@ -79,3 +79,4 @@ Brand, event format, budget, venue/permissions, monetization, geographic expansi
 |---|---|---|---|
 | 0.1 | — | Founder | Initial charter |
 | 0.2 | 2026-11-06 | Claude Code (CEO decision) | MOVA as an Open Social Platform: module map, architecture principles, roadmap with proposed Spec 003 (Accounts: Google Sign-In and Profiles) |
+| 0.2 (status) | 2026-11-06 | Claude Code (status only) | Spec 002 status corrected from DRAFT to approved and in review; no product change |
