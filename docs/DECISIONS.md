@@ -56,3 +56,31 @@ Constraint: Spec 001 keeps static output (REQ-004d) until Spec 002 amends it. No
 Status: ACCEPTED (CEO, 2026-11-06)
 Decision: Use the existing Supabase project `vozitoaqntixingqwuiw` (`https://vozitoaqntixingqwuiw.supabase.co`); do not create another project. Every schema change is an SQL migration in `supabase/migrations/`, reviewed by PR and tested against a local database in CI; the existing remote schema is captured first as a baseline migration. Clients and the web server use only the publishable key; secret and service-role keys never enter bundles, the repository or CI. Only the MOVA team publishes events at first.
 Constraint: Hosted migrations (`supabase db push`) and remote migration-history writes need separate CEO approval.
+
+## ADR-0011: MOVA is an Open Social Platform built as a modular monolith
+Status: ACCEPTED (CEO, 2026-11-06)
+Decision: One deployable system: one Expo codebase (iOS, Android, web), one Supabase project and one Vercel web server. Code and schema are split into **platform modules** (auth, permissions, media, i18n, design, config) and **business modules** (events, RSVP, hosts, profiles, social graph, feeds, rooms and communities, chats, swipe, notifications). Each module owns its folder, routes, data access, migrations and tests. Business modules depend on platform modules; they use other business modules only through a public entry point, never their internals. Folders for future modules are created by their own specs, not in advance.
+Reason: Clear boundaries without the operational cost of microservices.
+Consequence: ESLint import boundaries; migrations named by module; services split out only when measured load or team structure requires it, through a new ADR.
+
+## ADR-0012: Identity with Supabase Auth; `auth.users.id` is the canonical user ID
+Status: ACCEPTED (CEO, 2026-11-06) as direction; implemented by a future Accounts spec (proposed Spec 003)
+Decision: Supabase Auth with Google Sign-In first. Apple and email sign-in are added later as extra providers, without schema changes. `auth.users.id` (UUID) is the only user identifier in application tables, foreign keys, RLS and storage paths. Provider identifiers (Google `sub`, Apple user ID, email address) are never used as keys; Supabase keeps them in `auth.identities`, which also handles linking several providers to one user.
+Constraint: No authentication code before that spec is approved. Public event browsing needs no account.
+
+## ADR-0013: Public profiles separate from private user data
+Status: ACCEPTED (CEO, 2026-11-06) as direction; implemented by the Accounts spec
+Decision: `public.profiles` (primary key = `auth.users.id`) holds only what others may see: display name, avatar, bio, languages, interests, home city. Private data (email copy, phone, birth date, settings, consents) lives in a separate table that only its owner can read, through RLS on `auth.uid()`. Public views never join private columns. Attendance, location and similar signals stay private unless the user opts in.
+
+## ADR-0014: Shared permissions and media as platform modules
+Status: ACCEPTED (CEO, 2026-11-06) as direction
+Decision: Authorization is enforced in Postgres with RLS. Shared helper functions (for example `has_role`, `is_member`) and the role and membership model (member, host, moderator, admin) belong to the permissions module, not to any business module. Media is a shared module over Supabase Storage: one bucket per purpose, RLS on `storage.objects`, objects addressed by stable UUID paths. Business modules reference media, never provider URLs. Each is built by the first spec that needs it.
+
+## ADR-0015: Data conventions
+Status: ACCEPTED (CEO, 2026-11-06)
+Decision: Every table uses a stable UUID primary key (`gen_random_uuid()`), never reused or renumbered. Slugs are secondary unique keys. Timestamps are `timestamptz` (`created_at`, `updated_at`). User-facing content changes state through status columns rather than hard deletes, except where privacy law requires deletion. Every table gets RLS, explicit `REVOKE`/`GRANT`, a versioned migration and positive and negative database tests.
+
+## ADR-0016: Multi-city data model
+Status: ACCEPTED (CEO, 2026-11-06)
+Decision: Cities are data: `public.cities` (UUID, slug, name, country code, IANA time zone, active flag). Events and later city-scoped content reference `city_id`. Times are computed in the city's time zone. No code, constant or check constraint hard-codes Da Nang or a UTC offset; Da Nang is the first active city, added as reference data in a migration. The default city for a build comes from configuration.
+Consequence: Spec 002 drops its single-city constraints in favour of `cities` (Spec 002 design amendment A8).
