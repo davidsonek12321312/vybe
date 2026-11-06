@@ -1,0 +1,69 @@
+{
+  "name": "vybe",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "dependencies": {
+    "@expo/ui": "~57.0.26",
+    "expo": "~57.0.32",
+    "expo-constants": "~57.0.23",
+    "expo-device": "~57.0.2",
+    "expo-font": "~57.0.4",
+    "expo-glass-effect": "~57.0.5",
+    "expo-image": "~57.0.5",
+    "expo-linking": "~57.0.13",
+    "expo-localization": "~57.0.2",
+    "expo-router": "~57.0.30",
+    "expo-splash-screen": "~57.0.11",
+    "expo-status-bar": "~57.0.1",
+    "expo-symbols": "~57.0.3",
+    "expo-system-ui": "~57.0.4",
+    "expo-web-browser": "~57.0.3",
+    "i18n-js": "^4.5.4",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.10.1"
+  },
+  "devDependencies": {
+    "@react-native/jest-preset": "^0.86.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
+    "@types/react": "~19.2.2",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~57.0.2",
+    "eslint-plugin-react-native-a11y": "^3.5.1",
+    "jest": "^30.5.2",
+    "jest-expo": "~57.0.0",
+    "react-test-renderer": "^19.2.3",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typegen": "expo customize tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test:types": "node scripts/check-typed-routes.mjs",
+    "lint": "expo lint --max-warnings 0",
+    "test": "jest --passWithNoTests",
+    "export:web": "npx expo export -p web",
+    "check": "npm run typegen && npm run typecheck && npm run test:types && npm run lint && npm run test && npm run export:web",
+    "scan:secrets": "gitleaks dir . --config .gitleaks.toml --redact --no-banner",
+    "scan:secrets:history": "gitleaks git . --config .gitleaks.toml --redact --no-banner",
+    "scan:secrets:staged": "gitleaks git . --pre-commit --staged --config .gitleaks.toml --redact --no-banner",
+    "hooks:install": "node scripts/install-git-hooks.mjs",
+    "prepare": "node scripts/install-git-hooks.mjs"
+  },
+  "private": true,
+  "overrides": {
+    "eslint-plugin-react-native-a11y": {
+      "eslint": "$eslint"
+    }
+  }
+}
