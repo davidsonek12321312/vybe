@@ -64,4 +64,19 @@ describe('loader', () => {
     expect(data).toEqual({ status: 'error' });
     expect(toInitialEvent(data)).toBeNull();
   });
+
+  test('server lookup passes a timeout signal (CR-5, SEC-3)', async () => {
+    const getBySlug = jest.fn((_slug: string, signal?: AbortSignal) => {
+      void signal;
+      return Promise.resolve(null);
+    });
+    jest.spyOn(repositoryModule, 'getAppContext').mockReturnValue({
+      ok: true,
+      config: { source: 'sample', defaultCity: 'da-nang', siteUrl: null },
+      repository: { listUpcoming: jest.fn(), getBySlug },
+    });
+    await loader(loaderRequest(), { slug: 'timeout-signal-probe' });
+    expect(getBySlug).toHaveBeenCalledTimes(1);
+    expect(getBySlug.mock.calls[0][1]).toBeInstanceOf(AbortSignal);
+  });
 });

@@ -8,6 +8,8 @@ import { LoadError, type EventDetail } from './types';
 
 const TTL_MS = 5000;
 const MAX_ENTRIES = 200;
+/** Server lookups must finish inside the function's maxDuration (review CR-5, SEC-3). */
+export const LOOKUP_TIMEOUT_MS = 8000;
 const cache = new Map<string, { at: number; value: Promise<EventDetail | null> }>();
 
 export function loadEventForRoute(slug: string): Promise<EventDetail | null> {
@@ -18,7 +20,7 @@ export function loadEventForRoute(slug: string): Promise<EventDetail | null> {
   const hit = cache.get(slug);
   if (hit && now - hit.at < TTL_MS) return hit.value;
 
-  const value = context.repository.getBySlug(slug);
+  const value = context.repository.getBySlug(slug, AbortSignal.timeout(LOOKUP_TIMEOUT_MS));
   if (cache.size >= MAX_ENTRIES) {
     const oldest = cache.keys().next().value;
     if (oldest !== undefined) cache.delete(oldest);
