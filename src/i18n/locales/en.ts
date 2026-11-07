@@ -40,6 +40,7 @@ const en = {
     active: 'Filters: %{count}',
   },
   category: {
+    other: 'Other',
     social: 'Social & Meetups',
     beach_outdoors: 'Beach & Outdoors',
     sports_fitness: 'Sports & Fitness',

@@ -68,8 +68,11 @@ export function toEventSummary(value: unknown, options: MappingOptions): EventSu
   if (!id || !isValidSlug(slug) || !title || !area || !city || !startsAt || !endsAt) return null;
   if (endsAt <= startsAt) return null;
   if (status !== 'published' && status !== 'cancelled') return null;
-  if (!isCategory(value.category)) return null;
-  if (languages.length === 0 || !languages.every(isLanguage)) return null;
+  // Amendment v0.5 (REQ-037): unknown category or language values use a safe fallback; the event is kept.
+  if (typeof value.category !== 'string' || value.category === '') return null;
+  const category: EventCategory = isCategory(value.category) ? value.category : 'other';
+  if (languages.length === 0 || !languages.every((code) => typeof code === 'string' && code !== '')) return null;
+  const knownLanguages: EventLanguage[] = languages.map((code) => (isLanguage(code) ? code : 'other'));
 
   let price: EventSummary['price'];
   if (value.price_type === 'free') {
@@ -92,8 +95,8 @@ export function toEventSummary(value: unknown, options: MappingOptions): EventSu
     status,
     title,
     city,
-    category: value.category,
-    languages: languages as EventLanguage[],
+    category,
+    languages: knownLanguages,
     startsAt,
     endsAt,
     area,

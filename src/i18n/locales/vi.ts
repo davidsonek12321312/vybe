@@ -41,6 +41,7 @@ const vi: LocaleShape = {
     active: 'Bộ lọc: %{count}',
   },
   category: {
+    other: 'Khác',
     social: 'Giao lưu & gặp gỡ',
     beach_outdoors: 'Biển & ngoài trời',
     sports_fitness: 'Thể thao & thể hình',

@@ -41,6 +41,7 @@ const ru: LocaleShape = {
     active: 'Фильтры: %{count}',
   },
   category: {
+    other: 'Другое',
     social: 'Общение и встречи',
     beach_outdoors: 'Пляж и природа',
     sports_fitness: 'Спорт и фитнес',

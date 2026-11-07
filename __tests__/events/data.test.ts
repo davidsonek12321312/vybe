@@ -133,13 +133,23 @@ describe('row validation (REQ-030, 037)', () => {
   test.each([
     ['missing title', { title: null }],
     ['draft status', { status: 'draft' }],
-    ['unknown category', { category: 'dating' }],
-    ['unknown language', { languages: ['de'] }],
     ['end before start', { ends_at: '2026-12-05T09:00:00+00:00' }],
     ['paid without price', { price_type: 'paid' }],
     ['missing city', { city: null }],
   ])('%s → excluded', (_label, patch) => {
     expect(toEventSummary({ ...ROW, ...patch }, OPTIONS)).toBeNull();
+  });
+
+  test('unknown category or language is kept with a safe fallback (amendment v0.5, REQ-037)', () => {
+    const event = toEventSummary({ ...ROW, category: 'dating', languages: ['en', 'de'] }, OPTIONS);
+    expect(event?.category).toBe('other');
+    expect(event?.languages).toEqual(['en', 'other']);
+  });
+
+  test('empty category or language values are still excluded', () => {
+    expect(toEventSummary({ ...ROW, category: '' }, OPTIONS)).toBeNull();
+    expect(toEventSummary({ ...ROW, languages: [] }, OPTIONS)).toBeNull();
+    expect(toEventSummary({ ...ROW, languages: [''] }, OPTIONS)).toBeNull();
   });
 
   test('Solo-friendly without details shows no badge (S16)', () => {

@@ -11,7 +11,8 @@ export const EVENT_CATEGORIES = [
   'workshops',
   'nightlife',
 ] as const;
-export type EventCategory = (typeof EVENT_CATEGORIES)[number];
+/** `other` is only a display fallback for values this client does not know (amendment v0.5); it is not a filter. */
+export type EventCategory = (typeof EVENT_CATEGORIES)[number] | 'other';
 
 export const EVENT_LANGUAGES = ['en', 'vi', 'ru', 'other'] as const;
 export type EventLanguage = (typeof EVENT_LANGUAGES)[number];
