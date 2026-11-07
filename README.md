@@ -59,6 +59,10 @@ testing uses Expo Go.
 
 - **Sample (default, no setup):** fictional events, clearly labelled
   "Sample event, not real". Used when `EXPO_PUBLIC_MOVA_DATA_SOURCE` is unset.
+  `npm run web:sample` starts the web app on sample events even if `.env.local`
+  says `supabase`. If Discover shows "Events: 0" and then "You're offline", the
+  app is set to a local database that is not running: start it (`npm run db:start`)
+  or use `npm run web:sample`.
 - **Local Supabase (real database, disposable):** needs Docker Desktop.
 
   ```powershell

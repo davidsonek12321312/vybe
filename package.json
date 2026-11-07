@@ -65,6 +65,7 @@
     "prepare": "node scripts/install-git-hooks.mjs",
     "export:web:live": "node scripts/check-live-env.mjs && expo export -p web",
     "serve:web": "expo serve",
+    "web:sample": "node scripts/web-sample.mjs",
     "ssr:smoke": "node scripts/ssr-smoke.mjs",
     "check:bundle": "node scripts/check-bundle-secrets.mjs",
     "db:start": "supabase start -x realtime,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor",
