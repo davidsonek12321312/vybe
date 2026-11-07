@@ -5,6 +5,16 @@ import { Pressable, StyleSheet, Text, View, type TextProps, type ViewProps } fro
 
 import { MIN_TOUCH, colors, radii, spacing, typography, type TypographyVariant } from './tokens';
 
+type PressState = { pressed: boolean; focused?: boolean };
+
+/** Visible keyboard focus on the dark theme (the browser default is near-black on near-black). */
+export const focusRing = {
+  outlineWidth: 2,
+  outlineStyle: 'solid',
+  outlineColor: colors.text,
+  outlineOffset: 2,
+} as const;
+
 type TextTone = 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'danger' | 'onAccent';
 
 const toneColor: Record<TextTone, string> = {
@@ -50,7 +60,12 @@ export function Chip({
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
       onPress={onPress}
-      style={({ pressed }) => [styles.chip, selected && styles.chipSelected, pressed && styles.pressed]}>
+      style={({ pressed, focused }: PressState) => [
+        styles.chip,
+        selected && styles.chipSelected,
+        pressed && styles.pressed,
+        focused && focusRing,
+      ]}>
       <Text style={[typography.label, { color: selected ? colors.onAccent : colors.text }]}>{label}</Text>
     </Pressable>
   );
@@ -94,10 +109,11 @@ export function Button({
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
       onPress={onPress}
-      style={({ pressed }) => [
+      style={({ pressed, focused }: PressState) => [
         styles.button,
         primary ? styles.buttonPrimary : styles.buttonSecondary,
         pressed && styles.pressed,
+        focused && focusRing,
       ]}>
       <Text style={[typography.subheading, { color: primary ? colors.onAccent : colors.text }]}>{label}</Text>
     </Pressable>

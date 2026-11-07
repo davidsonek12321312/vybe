@@ -4,7 +4,7 @@
  */
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { AppText, Card } from '@/design/primitives';
+import { AppText, Card, focusRing } from '@/design/primitives';
 import { spacing } from '@/design/tokens';
 import { t } from '@/i18n';
 
@@ -39,7 +39,11 @@ export function EventCard({
       accessibilityRole="link"
       accessibilityLabel={`${event.title}. ${when}. ${meta}${badgeText ? `. ${badgeText}` : ''}`}
       onPress={() => onPress(event.slug)}
-      style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}>
+      style={({ pressed, focused }: { pressed: boolean; focused?: boolean }) => [
+        styles.pressable,
+        pressed && styles.pressed,
+        focused && focusRing,
+      ]}>
       <Card>
         <EventPoster event={event} weekday={day} />
         <View style={styles.body}>
