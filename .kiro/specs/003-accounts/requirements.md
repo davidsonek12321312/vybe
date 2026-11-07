@@ -76,6 +76,8 @@ Priority: (M) must, (S) should. Every requirement uses EARS wording.
 - **REQ-039 (M)** WHEN a person changes their password or email, THE system SHALL require a recent sign-in first and SHALL end their other sessions.
 - **REQ-040 (M)** THE system SHALL limit failed sign-ins, registrations and reset requests per address and per client, with a neutral "try again later" message (extends REQ-025).
 
+- **REQ-044 (M)** BEFORE creating a profile, THE app SHALL require the user to confirm "I am 18 or older"; THE system SHALL store only the confirmation (true) and its time in private data, SHALL NOT collect a birth date for this purpose, and SHALL NOT create a profile without it. (CEO decision Q5, 2026-11-07.)
+
 ### Profiles
 
 - **REQ-009 (M)** WHEN a user is created, THE system SHALL create exactly one profile whose primary key equals `auth.users.id`.
@@ -150,7 +152,7 @@ Priority: (M) must, (S) should. Every requirement uses EARS wording.
 |---|---|---|
 | Sign-in and session | 001-008 | S1-S4, S12 |
 | Email and password | 034-040 | S15-S18 |
-| Profiles and profile pages | 009-015, 041-043 | S1, S5, S6, S19-S21 |
+| Profiles and profile pages | 009-015, 041-044 | S1, S5, S6, S19-S21 |
 | Avatar | 016-018 | S7 |
 | Privacy, export, deletion | 019-024 | S9-S11 |
 | Abuse and security | 025-029 | S8, S12, S13 |
@@ -181,12 +183,12 @@ the rest take the default unless the CEO objects.
 | Q2 | Account deletion: immediate or grace period | Immediate and final, after re-authentication and a second confirmation. A grace period needs a soft-delete state and a scheduled job; revisit if support needs it. | Default |
 | Q3 | Terms and privacy text | EN text from the CEO or legal, VI and RU after. Development uses clearly marked placeholder text, and public release waits for the final text. | **CEO** |
 | Q4 | Bot check at sign-up | Rate limits plus email confirmation for the pilot. Add Cloudflare Turnstile on email registration only if abuse appears; that is a new third-party service and needs CEO approval then. | Default |
-| Q5 | Minimum age | Required checkbox "I am 18 or older", stored as a boolean and a time, no birth date. Legal confirmation of 18 versus 16 is needed. | **CEO** |
+| Q5 | Minimum age | Required checkbox "I am 18 or older", stored as a boolean and a time, no birth date. Legal confirmation of 18 versus 16 is still needed. | **DECIDED by the CEO, 2026-11-07: 18+ checkbox** (REQ-044) |
 | Q6 | Where deletion runs | A `SECURITY DEFINER` SQL function `delete_my_account()` removes the rows and the `auth.users` row; the client first deletes its own avatar through its storage policy. No secret key outside Supabase, no Edge Function, no Vercel secret. The design phase confirms this works; if not, a Vercel server route holding the secret key needs CEO approval. | Default; design verifies |
 | Q7 | Web or native first | Web and Expo Go through browser-based OAuth first; a native Google SDK needs a development build and comes later. | Default |
 | Q8 | Public handle | Required, unique, changeable with a cool-down (REQ-041). | Default |
-| Q9 | Profile visibility | `members` by default; the user can make a profile `public`; no directory or search in this spec. | **CEO** (privacy stance) |
-| Q10 | ADR-0012 amendment | Record that email and password join Google in Spec 003 (ADR-0012 said "later"); Apple stays later. | **CEO** |
+| Q9 | Profile visibility | `members` by default; the user can make a profile `public`; no directory or search in this spec. | **DECIDED by the CEO, 2026-11-07: signed-in users only by default, user may opt in to public** |
+| Q10 | ADR-0012 amendment | Record that email and password join Google in Spec 003 (ADR-0012 said "later"); Apple stays later. | **DECIDED by the CEO, 2026-11-07: Google and email/password.** The ADR text still needs a recorded amendment. |
 
 ## Change Log
 
@@ -194,3 +196,4 @@ the rest take the default unless the CEO objects.
 |---|---|---|---|
 | 0.1 | 2026-11-07 | Claude Code (MOVA worker, draft for CEO review) | Initial DRAFT, requirements only |
 | 0.2 | 2026-11-07 | Claude Code (MOVA worker, draft for CEO review) | CEO request: email and password (REQ-034 to 040), profile pages with handle and visibility (REQ-014 rewritten, REQ-041 to 043), scenarios S15 to S21, threats, recommended defaults for Q1 to Q7 and new Q8 to Q10 |
+| 0.2.1 | 2026-11-07 | Claude Code (recording the CEO's decisions) | CEO decided Q5 (18+ checkbox, new REQ-044), Q9 (signed-in only by default) and Q10 (Google and email/password). Status stays DRAFT: Q3 (terms text) is open, and the CEO has not approved the document. |
