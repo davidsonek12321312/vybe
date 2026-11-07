@@ -1,7 +1,7 @@
 /**
  * Root layout — Spec 001 REQ-003, Spec 002 REQ-040, REQ-049.
  * Design lab: Afterglow theme colours, web theme-color and color-scheme.
- * One dark Stack. `initialRouteName` keeps Discover under a deep-linked event,
+ * One dark Stack. `anchor` keeps Discover under a deep-linked event,
  * so the back control returns to Discover instead of closing the app.
  */
 import { Stack } from 'expo-router';
@@ -17,7 +17,7 @@ import { t } from '@/i18n';
 void SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
-  initialRouteName: 'index',
+  anchor: 'index',
 };
 
 export default function RootLayout(): React.JSX.Element {

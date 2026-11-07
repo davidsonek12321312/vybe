@@ -50,6 +50,7 @@ export function EventPoster({
             <Image
               source={source}
               style={StyleSheet.absoluteFill}
+              alt=""
               contentFit="cover"
               transition={200}
               priority={priority ? 'high' : 'normal'}
@@ -76,7 +77,7 @@ export function Scrim({ style }: { style?: StyleProp<ViewStyle> }) {
       pointerEvents="none"
       aria-hidden
       style={[StyleSheet.absoluteFill, style]}>
-      <Image source={SCRIM} style={StyleSheet.absoluteFill} contentFit="fill" />
+      <Image source={SCRIM} alt="" style={StyleSheet.absoluteFill} contentFit="fill" />
     </View>
   );
 }
