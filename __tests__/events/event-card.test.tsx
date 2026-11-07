@@ -39,4 +39,10 @@ describe('EventCard accessible name', () => {
     expect(name).toMatch(/18\+/);
     expect(name).toMatch(/Sample/);
   });
+
+  it('does not clamp the venue, language and price line (CR-6, NFR-002)', async () => {
+    await render(<EventCard event={base} now={NOW} locale="en" onPress={() => {}} />);
+    const meta = screen.getByText(/Free/);
+    expect(meta.props.numberOfLines).toBeUndefined();
+  });
 });

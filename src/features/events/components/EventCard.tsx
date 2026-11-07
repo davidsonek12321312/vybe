@@ -49,7 +49,7 @@ export function EventCard({
           <AppText variant="subheading" numberOfLines={2}>
             {event.title}
           </AppText>
-          <AppText variant="caption" tone="secondary" numberOfLines={2}>
+          <AppText variant="caption" tone="secondary">
             {meta}
           </AppText>
           <EventBadges event={event} now={now} />
