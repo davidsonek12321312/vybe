@@ -295,6 +295,25 @@ loader returns `error` and the browser retries through the repository.
 returns `null` and the screen loads through `EventRepository`; web uses
 `useLoaderData()` (`use-route-event.web.ts`).
 
+### Implementation evidence: independent review outcome (2026-11-07)
+
+Recording only. Full findings, severities and commit ids:
+`docs/reviews/spec-002-implementation-review.md`.
+
+- Reviews: code review (sonnet) and security review (opus) on tip `a2819b4`; every finding was checked
+  against the code, none was a false positive. All in-scope findings were fixed, one commit each.
+- CEO decisions (2026-11-07): AR1 security headers and AR3 unknown-value fallback, recorded in
+  `amendment-v0.5.md`; AR2 `change_note` stays optional (generic "Details changed" line); AR4 real-device
+  time-zone checks (task 1, M1/M2) are required before the public release, not before the pull requests.
+- New migration `20261107100000_harden_events.sql` (service_role privileges, URL allowlists, organiser check).
+  It has not been applied to the hosted project.
+- Verification on the branch tip: `npm run check` exit 0 (11 suites, 124 Jest tests, SSR smoke all passed,
+  bundle scan clean); `db:reset` and `db:test` 71/71; generated types regenerated (no drift after the API
+  schema config change); `npm run scan:secrets` clean.
+- Open: AR5 (hide Register once an event starts?), manual item M13 (web screen reader check of the filter chips,
+  browser hydration check of the city-time label), native-speaker review of the new VI and RU strings,
+  UI test follow-ups listed in the review record (CR-3), first CI run on Node 22 and the `database` job.
+
 ## Change Log
 
 | Version | Date | Author | Summary |
@@ -307,6 +326,7 @@ returns `null` and the screen loads through `EventRepository`; web uses
 | 0.4 (approval) | 2026-11-06 | Claude Code (recording only) | Approved by the CEO on 2026-11-06; implementation authorized on `feature/spec-002-event-discovery` (local disposable database only) |
 | 0.4 (progress) | 2026-11-06 | Claude Code (recording only) | Implementation evidence, D22 and D23 decisions recorded; no scope change |
 | 0.5 (amendment) | 2026-11-07 | Claude Code (recording only) | CEO-approved amendment recorded in `amendment-v0.5.md`: A11 security headers (AR1) and REQ-037 unknown-value fallback (AR3) |
+| 0.5 (review) | 2026-11-07 | Claude Code (recording only) | Independent review outcome, fixes and verification evidence recorded; no scope change |
 
 **This document is APPROVED (v0.4, CEO, 2026-11-06). Any change requires a
 spec amendment with a new version and fresh CEO approval.**
