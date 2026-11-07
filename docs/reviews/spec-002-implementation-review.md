@@ -68,3 +68,44 @@ re-verification.
 
 - Hosted baseline pull (task 4), device checks M1–M5 and M7–M12, native-speaker review of VI and RU,
   merges and deployment remain CEO or person gates.
+
+## Disposition after fixes (2026-11-07)
+
+Every finding above was either fixed on `feature/spec-002-event-discovery` (one commit each,
+with tests), decided by the CEO, or moved to a manual or release list. Commit ids are short hashes.
+
+| Finding | Status | Commit |
+|---|---|---|
+| SEC-1 | Fixed: Vercel build runs `export:web:live` and `check:bundle`; all env files read in Expo order; secret-shaped `EXPO_PUBLIC_*` values rejected | 3dca8c9 |
+| SEC-2 | Fixed: gitleaks rules and bundle patterns for `sbp_` tokens and `postgres://user:pass@` | 8c39a8e |
+| CR-1 | Fixed: badges in the card's accessible name, with a test | 7ae7b67 |
+| CR-2 | Fixed: loading, error and Retry banner over the cached summary | 4d97459 |
+| CR-3 | Fixed in parts: hook tests with fake timers (10 s, 20 s, last good list), repository query, HTTP 500 and no-title cases, Ended and Updated banners. **Not covered yet:** refresh keeps filters, Clear all, Happening-now badge, city-time label UI, share copy fallback, S15, S17, failed cover image | 2d79ce8, 2845663, e74aefa |
+| CR-4 | Fixed: neutral metadata on a lookup failure | b14fab8 |
+| CR-5, SEC-3 | Fixed: 8 s lookup timeout, `maxDuration` 10 | f16c0e1 |
+| CR-6 | Fixed: meta line no longer clamped | 7d28bd9 |
+| CR-7 | Fixed in code: chips are `checkbox` with `checked`. Screen-reader check on web is manual (M13) | 03bcc10 |
+| CR-8 | Fixed: chips show the active values | 9e32212 |
+| CR-9 | Open, manual (M13): server and client time zone, locale and clock may differ at hydration; needs a browser check | — |
+| CR-10 | Guard fixed (UTC fallback). Device verification stays a release requirement (AR4) | 7ee3744 |
+| CR-11 | Fixed: both banners; generic "Details changed" line (AR2) | e74aefa |
+| CR-12a | Open: product decision AR5 (hide Register once an event starts?) | — |
+| CR-12b | Fixed: `updatedAt` is null when invalid and the line is hidden | e3b00a3 |
+| CR-13 | Fixed: 404 page uses the active locale and design tokens | b150c82 |
+| CR-14 | Fixed: slug as secondary order; unknown category or language maps to `other` (amendment v0.5). Note: the amendment text says an unknown language shows its raw code; the client maps it to `other` because the type has no slot for a raw code | b974bdb, 1b46958 |
+| CR-15, CR-16 | Fixed: detail screen keyed by slug; i18n placeholder test | ca60282 |
+| SEC-4 | Fixed per amendment A11. Headers are confirmed on the first preview deployment (needs CEO approval) | b56476f |
+| SEC-5 | Fixed: `supabase/setup-cli` pinned to the v1.2.0 commit; `persist-credentials: false`. Confirmed by the first CI run | 7cfb202 |
+| SEC-6, SEC-8 (database), SEC-9 | Fixed in migration `20261107100000_harden_events.sql`, with pgTAP tests | dd41e9d |
+| SEC-8 (client) | Fixed: `isSafeUrl` mirrors the database rules | 795f6d2 |
+| SEC-7 | Fixed: `events_hardening.test.sql` (RLS on every table, no views, trigger functions not executable, exact `service_role` privileges, no storage write policies) | e1821ac |
+| SEC-10 | Fixed: `SafeText` uses `openExternal` | f876545 |
+| SEC-11 | Documented: cover images use UUID paths and are uploaded at publish time (a public bucket is readable by anyone who knows the object name). No code change | — |
+| SEC-12 | (a) every 404 logs "SSR render error" (D22): filter in the log drain; (b) native builds need `EXPO_PUBLIC_SITE_URL` or share links fall back to `mova://` (D19); (c), (d) fixed: `.omc/` ignored, `config.toml` tightened for the local stack (`public` only, signups off, password length 12; never `config push` without review) | e1821ac |
+
+## Items for the CEO or a person
+
+- AR5 (CR-12a): hide the Register button once an event has started, or keep it for late joiners?
+- Manual list M13: web screen reader check of the filter chips (CR-7) and a browser hydration check of the "(Da Nang time)" label and banners (CR-9).
+- Native-speaker review (B5) now also covers the new strings: `status.detailsChanged` and `category.other` in Vietnamese and Russian.
+- CR-3 UI tests listed as not covered above are a follow-up; the fixes themselves are verified by the tests that exist.
