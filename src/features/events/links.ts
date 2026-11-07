@@ -6,6 +6,10 @@
 const MAPS_URL = /^https:\/\/(www\.google\.com\/maps\/|maps\.app\.goo\.gl\/|maps\.apple\.com\/)/;
 const REGISTRATION_URL = /^https:\/\/(docs\.google\.com\/forms\/|forms\.gle\/)/;
 const HTTPS_URL = /^https:\/\/[^\s/?#]+(?:[/?#][^\s]*)?$/;
+// Review SEC-8: path traversal, encoded dots, backslashes and very long values
+// can bypass a prefix allowlist. Mirrors the database check constraints.
+const UNSAFE_URL = /(\.\.|%2e|\x5c|\s)/i;
+const MAX_URL_LENGTH = 2048;
 const URL_IN_TEXT = /https:\/\/[^\s<>"'`]+/g;
 const TRAILING_PUNCTUATION = /[.,;:!?)\]]+$/;
 
@@ -13,12 +17,16 @@ export function isHttpsUrl(value: unknown): value is string {
   return typeof value === 'string' && HTTPS_URL.test(value);
 }
 
+export function isSafeUrl(value: string): boolean {
+  return value.length <= MAX_URL_LENGTH && !UNSAFE_URL.test(value);
+}
+
 export function isAllowedMapsUrl(value: unknown): value is string {
-  return isHttpsUrl(value) && MAPS_URL.test(value);
+  return isHttpsUrl(value) && isSafeUrl(value) && MAPS_URL.test(value);
 }
 
 export function isAllowedRegistrationUrl(value: unknown): value is string {
-  return isHttpsUrl(value) && REGISTRATION_URL.test(value);
+  return isHttpsUrl(value) && isSafeUrl(value) && REGISTRATION_URL.test(value);
 }
 
 /** Host of an https URL, lower-cased, or null. */

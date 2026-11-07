@@ -2,7 +2,7 @@
  * Validates Data API rows and maps them to domain objects — Spec 002 REQ-030,
  * REQ-037. Invalid rows return null and are left out of the UI.
  */
-import { hostOf, isAllowedMapsUrl, isAllowedRegistrationUrl, isHttpsUrl } from './links';
+import { hostOf, isAllowedMapsUrl, isAllowedRegistrationUrl, isHttpsUrl, isSafeUrl } from './links';
 import {
   EVENT_CATEGORIES,
   EVENT_LANGUAGES,
@@ -87,7 +87,7 @@ export function toEventSummary(value: unknown, options: MappingOptions): EventSu
   const age = value.age_restriction;
   const cover = text(value.cover_image_url);
   const coverAllowed =
-    cover !== null && isHttpsUrl(cover) && options.coverHost !== null && hostOf(cover) === options.coverHost;
+    cover !== null && isHttpsUrl(cover) && isSafeUrl(cover) && options.coverHost !== null && hostOf(cover) === options.coverHost;
 
   return {
     id,

@@ -152,6 +152,20 @@ describe('row validation (REQ-030, 037)', () => {
     expect(toEventSummary({ ...ROW, languages: [''] }, OPTIONS)).toBeNull();
   });
 
+  test('URL allowlists reject traversal, encoded dots and backslashes (SEC-8)', () => {
+    const base = { ...ROW, venue_status: 'confirmed', venue_name: 'Venue' };
+    const bad = [
+      'https://www.google.com/maps/../url?q=https://evil.example',
+      'https://www.google.com/maps/%2e%2e/url',
+      'https://www.google.com/maps/' + String.fromCharCode(92) + 'x',
+    ];
+    for (const maps_url of bad) {
+      expect(toEventDetail({ ...base, maps_url }, OPTIONS)?.mapsUrl).toBeNull();
+    }
+    expect(toEventDetail({ ...base, registration_url: 'https://docs.google.com/forms/../document/d/x' }, OPTIONS)?.registrationUrl).toBeNull();
+    expect(toEventDetail({ ...base, maps_url: 'https://www.google.com/maps/place/Da+Nang' }, OPTIONS)?.mapsUrl).toBe('https://www.google.com/maps/place/Da+Nang');
+  });
+
   test('Solo-friendly without details shows no badge (S16)', () => {
     expect(toEventSummary({ ...ROW, solo_details: null }, OPTIONS)?.soloFriendly).toBe(false);
   });
