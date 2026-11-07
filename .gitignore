@@ -60,3 +60,6 @@ gitleaks-report*.json
 
 # Local-only agent/IDE settings
 .claude/settings.local.json
+
+# Local worker and OMC state (holds local demo keys; never committed)
+.omc/

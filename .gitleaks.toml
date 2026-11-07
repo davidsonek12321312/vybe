@@ -40,6 +40,7 @@ regexes = ['''^sb_publishable_[A-Za-z0-9_\-]{10,}$''']
 [[allowlists]]
 description = "Generated, vendored and VCS directories"
 paths = [
+  '''(^|[\\/])\.omc[\\/]''',
   '''(^|[\\/])node_modules[\\/]''',
   '''(^|[\\/])dist[\\/]''',
   '''(^|[\\/])web-build[\\/]''',
