@@ -182,6 +182,23 @@ describe('Supabase repository (REQ-004, 017, 041, 051)', () => {
     expect(LIST_COLUMNS).not.toContain('*');
     expect(calls).toContainEqual(['eq', ['city.slug', 'da-nang']]);
     expect(calls).toContainEqual(['in', ['status', ['published', 'cancelled']]]);
+    // CR-3: ended events are excluded in the query, ordered by start, and bounded.
+    expect(calls).toContainEqual(['gt', ['ends_at', '2026-12-01T00:00:00.000Z']]);
+    expect(calls).toContainEqual(['order', ['starts_at', { ascending: true }]]);
+    expect(calls).toContainEqual(['limit', [200]]);
+  });
+
+  test('HTTP 500 → server LoadError, no raw message (S18)', async () => {
+    const { client } = fakeClient({ data: null, error: { message: 'relation "events" exploded', code: 'XX000' }, status: 500 });
+    const repo = createSupabaseRepository(client, OPTIONS);
+    await expect(repo.listUpcoming('da-nang', new Date())).rejects.toMatchObject({ kind: 'server' });
+  });
+
+  test('rows without a title are dropped, the rest are listed (S18)', async () => {
+    const { client } = fakeClient({ data: [{ ...ROW, title: '' }, ROW], error: null, status: 200 });
+    const repo = createSupabaseRepository(client, OPTIONS);
+    const events = await repo.listUpcoming('da-nang', new Date('2026-12-01T00:00:00Z'));
+    expect(events).toHaveLength(1);
   });
 
   test('invalid slugs return null without a request (S11)', async () => {
