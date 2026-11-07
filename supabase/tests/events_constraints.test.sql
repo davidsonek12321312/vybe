@@ -68,5 +68,29 @@ update public.events set venue_status = 'confirmed', venue_name = 'Somewhere' wh
 select is((select material_changed_at from public.events where slug = 'pgtap-draft-edit'), null, 'editing a draft is not a material change');
 select is((select published_at from public.events where slug = 'pgtap-draft-edit'), null, 'a draft has no published_at');
 
+-- Review SEC-6, SEC-8, SEC-9.
+select ok(not has_table_privilege('service_role', 'public.events', 'TRUNCATE'), 'service_role cannot TRUNCATE events (SEC-6)');
+select ok(not has_table_privilege('service_role', 'public.cities', 'TRUNCATE'), 'service_role cannot TRUNCATE cities (SEC-6)');
+select ok(has_table_privilege('service_role', 'public.events', 'SELECT'), 'service_role can still read events');
+
+select throws_ok($$insert into public.events (slug, city_id, title, description, category, languages, starts_at, ends_at, area, price_type, organizer_name, venue_status, venue_name, maps_url)
+  select 'pgtap-maps-dots', city_id, 'Maps', 'D', 'social', array['en'], now() + interval '1 day', now() + interval '1 day 1 hour', 'Area', 'free', 'MOVA Team', 'confirmed', 'Venue', 'https://www.google.com/maps/../url?q=https://evil.example' from base$$,
+  '23514', null, 'a maps link with path traversal is rejected (SEC-8)');
+select throws_ok($$insert into public.events (slug, city_id, title, description, category, languages, starts_at, ends_at, area, price_type, organizer_name, registration_url)
+  select 'pgtap-form-dots', city_id, 'Form', 'D', 'social', array['en'], now() + interval '1 day', now() + interval '1 day 1 hour', 'Area', 'free', 'MOVA Team', 'https://docs.google.com/forms/../document/d/x' from base$$,
+  '23514', null, 'a registration link with path traversal is rejected (SEC-8)');
+select throws_ok($$insert into public.events (slug, city_id, title, description, category, languages, starts_at, ends_at, area, price_type, organizer_name, registration_url)
+  select 'pgtap-form-http', city_id, 'Form', 'D', 'social', array['en'], now() + interval '1 day', now() + interval '1 day 1 hour', 'Area', 'free', 'MOVA Team', 'http://forms.gle/x' from base$$,
+  '23514', null, 'an http registration link is rejected');
+select throws_ok($$insert into public.events (slug, city_id, title, description, category, languages, starts_at, ends_at, area, price_type, organizer_name, cover_image_url)
+  select 'pgtap-cover-js', city_id, 'Cover', 'D', 'social', array['en'], now() + interval '1 day', now() + interval '1 day 1 hour', 'Area', 'free', 'MOVA Team', 'javascript:alert(1)' from base$$,
+  '23514', null, 'a javascript: cover link is rejected');
+select throws_ok($$insert into public.events (slug, city_id, title, description, category, languages, starts_at, ends_at, area, price_type, organizer_name)
+  select 'pgtap-org-phone', city_id, 'Org', 'D', 'social', array['en'], now() + interval '1 day', now() + interval '1 day 1 hour', 'Area', 'free', 'Call 090 123 4567' from base$$,
+  '23514', null, 'an organiser name with a spaced phone number is rejected (SEC-9)');
+select throws_ok($$insert into public.events (slug, city_id, title, description, category, languages, starts_at, ends_at, area, price_type, organizer_name)
+  select 'pgtap-org-tme', city_id, 'Org', 'D', 'social', array['en'], now() + interval '1 day', now() + interval '1 day 1 hour', 'Area', 'free', 'Chat t.me/host' from base$$,
+  '23514', null, 'an organiser name with a messenger link is rejected (SEC-9)');
+
 select * from finish();
 rollback;
