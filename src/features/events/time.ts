@@ -21,20 +21,34 @@ const partsFormatters = new Map<string, Intl.DateTimeFormat>();
 function partsFormatter(timeZone: string): Intl.DateTimeFormat {
   let formatter = partsFormatters.get(timeZone);
   if (!formatter) {
-    formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone,
-      hourCycle: 'h23',
-      weekday: 'short',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
+    formatter = buildPartsFormatter(timeZone);
     partsFormatters.set(timeZone, formatter);
   }
   return formatter;
+}
+
+function buildPartsFormatter(timeZone: string): Intl.DateTimeFormat {
+  // Review CR-10: an engine without IANA zone support (or a bad zone id) must not
+  // crash the screen. Fall back to UTC; real-device checks are still required (AR4).
+  try {
+    return makeFormatter(timeZone);
+  } catch {
+    return makeFormatter('UTC');
+  }
+}
+
+function makeFormatter(timeZone: string): Intl.DateTimeFormat {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hourCycle: 'h23',
+    weekday: 'short',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
 }
 
 export function zonedParts(date: Date, timeZone: string): ZonedParts {
@@ -158,7 +172,11 @@ function formatter(locale: string, timeZone: string, kind: 'time' | 'day' | 'lon
           : kind === 'long'
             ? { weekday: 'long', day: 'numeric', month: 'long' }
             : { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' };
-    f = new Intl.DateTimeFormat(intlLocale, { ...options, timeZone });
+    try {
+      f = new Intl.DateTimeFormat(intlLocale, { ...options, timeZone });
+    } catch {
+      f = new Intl.DateTimeFormat(intlLocale, { ...options, timeZone: 'UTC' }); // CR-10
+    }
     formatters.set(key, f);
   }
   return f;

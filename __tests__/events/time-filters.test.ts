@@ -142,3 +142,13 @@ describe('listing rules (REQ-004, 005, 006)', () => {
     expect(sections.map((s) => s.key)).toEqual(['2026-12-03', '2026-12-05', '2026-12-06', '2026-12-07']);
   });
 });
+
+describe('unsupported time zone (CR-10)', () => {
+  test('a bad zone id does not throw; it falls back to UTC', () => {
+    const at = new Date('2026-12-03T05:00:00Z');
+    expect(() => zonedParts(at, 'Not/AZone')).not.toThrow();
+    expect(zonedParts(at, 'Not/AZone').hour).toBe(5);
+    expect(() => formatTime(at, 'en', 'Not/AZone')).not.toThrow();
+    expect(formatTime(at, 'en', 'Not/AZone')).toBe('05:00');
+  });
+});
