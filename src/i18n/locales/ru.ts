@@ -18,6 +18,10 @@ const ru: LocaleShape = {
     refresh: 'Обновить',
     refreshing: 'Обновление…',
     sampleBanner: 'Предпросмотр: это примеры событий, а не настоящие.',
+    nextUp: 'Скоро',
+    lede: 'Знакомьтесь с местными, путешественниками и цифровыми кочевниками на событиях в городе. Смотреть можно бесплатно и без аккаунта.',
+    previewTag: 'Превью',
+    photoCredits: 'Фото к примерам — иллюстрации с Wikimedia Commons (лицензии CC).',
   },
   filters: {
     date: 'Дата',
@@ -38,6 +42,7 @@ const ru: LocaleShape = {
     reset: 'Сбросить',
     close: 'Закрыть',
     sheetHint: 'Выберите один или несколько',
+    soloOnly: 'Только события, куда можно прийти одному',
     active: 'Фильтры: %{count}',
   },
   category: {
@@ -80,6 +85,7 @@ const ru: LocaleShape = {
     when: 'Когда',
     where: 'Где',
     opensExternally: 'Откроется вне приложения',
+    photoCredit: 'Фото: %{credit}',
   },
   status: {
     cancelled: 'Отменено',

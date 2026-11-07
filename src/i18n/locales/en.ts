@@ -17,6 +17,10 @@ const en = {
     refresh: 'Refresh',
     refreshing: 'Refreshing…',
     sampleBanner: 'Preview: these are sample events, not real ones.',
+    nextUp: 'Next up',
+    lede: 'Meet locals, travellers and nomads at events around the city. Free to browse, no account needed.',
+    previewTag: 'Preview',
+    photoCredits: 'Sample photos are stand-ins from Wikimedia Commons (CC licences).',
   },
   filters: {
     date: 'Date',
@@ -37,6 +41,7 @@ const en = {
     reset: 'Reset',
     close: 'Close',
     sheetHint: 'Choose one or more',
+    soloOnly: 'Only solo-friendly events',
     active: 'Filters: %{count}',
   },
   category: {
@@ -79,6 +84,7 @@ const en = {
     when: 'When',
     where: 'Where',
     opensExternally: 'Opens outside the app',
+    photoCredit: 'Photo: %{credit}',
   },
   status: {
     cancelled: 'Cancelled',
@@ -104,7 +110,7 @@ const en = {
     emptyBody: 'New events are added every week.',
     noMatchesTitle: 'No events match your filters',
     clearFilters: 'Clear filters',
-    tryAnyDate: 'Try "Any date"',
+    tryAnyDate: 'Try “Any date”',
     offlineTitle: "You're offline",
     offlineBody: 'Check your connection and try again.',
     serverTitle: "Can't load events right now",

@@ -30,7 +30,7 @@ const base: EventSummary = {
 
 describe('EventCard accessible name', () => {
   it('includes Cancelled, Solo, 18+ and Sample badges', async () => {
-    await render(<EventCard event={base} now={NOW} locale="en" onPress={() => {}} />);
+    await render(<EventCard event={base} now={NOW} locale="en" />);
     const card = screen.getByRole('link');
     const name = String(card.props.accessibilityLabel);
     expect(name).toContain('Beach Social');
@@ -41,7 +41,7 @@ describe('EventCard accessible name', () => {
   });
 
   it('does not clamp the venue, language and price line (CR-6, NFR-002)', async () => {
-    await render(<EventCard event={base} now={NOW} locale="en" onPress={() => {}} />);
+    await render(<EventCard event={base} now={NOW} locale="en" />);
     const meta = screen.getByText(/Free/);
     expect(meta.props.numberOfLines).toBeUndefined();
   });

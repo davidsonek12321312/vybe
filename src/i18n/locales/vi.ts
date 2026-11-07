@@ -18,6 +18,10 @@ const vi: LocaleShape = {
     refresh: 'Làm mới',
     refreshing: 'Đang làm mới…',
     sampleBanner: 'Xem trước: đây là sự kiện mẫu, không có thật.',
+    nextUp: 'Sắp diễn ra',
+    lede: 'Gặp gỡ người địa phương, du khách và dân du mục số tại các sự kiện quanh thành phố. Xem miễn phí, không cần tài khoản.',
+    previewTag: 'Xem trước',
+    photoCredits: 'Ảnh của sự kiện mẫu là ảnh minh hoạ từ Wikimedia Commons (giấy phép CC).',
   },
   filters: {
     date: 'Ngày',
@@ -38,6 +42,7 @@ const vi: LocaleShape = {
     reset: 'Đặt lại',
     close: 'Đóng',
     sheetHint: 'Chọn một hoặc nhiều',
+    soloOnly: 'Chỉ sự kiện phù hợp đi một mình',
     active: 'Bộ lọc: %{count}',
   },
   category: {
@@ -80,6 +85,7 @@ const vi: LocaleShape = {
     when: 'Thời gian',
     where: 'Địa điểm',
     opensExternally: 'Mở bên ngoài ứng dụng',
+    photoCredit: 'Ảnh: %{credit}',
   },
   status: {
     cancelled: 'Đã hủy',
@@ -105,7 +111,7 @@ const vi: LocaleShape = {
     emptyBody: 'Sự kiện mới được thêm mỗi tuần.',
     noMatchesTitle: 'Không có sự kiện phù hợp với bộ lọc',
     clearFilters: 'Xóa bộ lọc',
-    tryAnyDate: 'Thử "Mọi ngày"',
+    tryAnyDate: 'Thử “Mọi ngày”',
     offlineTitle: 'Bạn đang ngoại tuyến',
     offlineBody: 'Hãy kiểm tra kết nối và thử lại.',
     serverTitle: 'Không thể tải sự kiện lúc này',
