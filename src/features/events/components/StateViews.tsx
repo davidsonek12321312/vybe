@@ -2,28 +2,65 @@
  * Loading, empty, error and banner states — Spec 002 REQ-009, 032–036.
  * Users never see error codes or raw messages (REQ-037).
  */
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 
+import { SunMark } from '@/design/icons';
+import { useReducedMotion } from '@/design/motion';
 import { AppText, Button } from '@/design/primitives';
 import { colors, radii, spacing } from '@/design/tokens';
 import { t } from '@/i18n';
 
 import type { LoadErrorKind } from '../types';
 
-export function SkeletonCards({ count = 3 }: { count?: number }) {
+/** A slow breathing pulse; still under reduced motion. */
+function usePulse() {
+  const reduced = useReducedMotion();
+  const [value] = useState(() => new Animated.Value(1));
+  useEffect(() => {
+    if (reduced) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(value, { toValue: 0.55, duration: 900, useNativeDriver: true }),
+        Animated.timing(value, { toValue: 1, duration: 900, useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [reduced, value]);
+  return value;
+}
+
+/** Skeleton in the shape of the screen being loaded: a spotlight, then rows. */
+export function SkeletonCards({ count = 3, variant = 'list' }: { count?: number; variant?: 'list' | 'detail' }) {
+  const opacity = usePulse();
   return (
-    <View accessibilityLabel={t('states.loading')} accessibilityRole="progressbar" style={styles.skeletons}>
-      {Array.from({ length: count }, (_, index) => (
-        <View key={index} style={styles.skeletonCard}>
-          <View style={styles.skeletonPoster} />
+    <Animated.View accessibilityLabel={t('states.loading')} accessibilityRole="progressbar" style={[styles.skeletons, { opacity }]}>
+      {variant === 'detail' ? (
+        <>
+          <View style={styles.skeletonHero} />
           <View style={styles.skeletonBody}>
-            <View style={[styles.skeletonLine, { width: '40%' }]} />
-            <View style={[styles.skeletonLine, { width: '85%', height: 18 }]} />
-            <View style={[styles.skeletonLine, { width: '65%' }]} />
+            <View style={[styles.skeletonLine, { width: '30%' }]} />
+            <View style={[styles.skeletonLine, styles.skeletonTitle, { width: '80%' }]} />
+            <View style={[styles.skeletonLine, { width: '55%' }]} />
           </View>
-        </View>
-      ))}
-    </View>
+        </>
+      ) : (
+        <>
+          <View style={styles.skeletonSpotlight} />
+          {Array.from({ length: count }, (_, index) => (
+            <View key={index} style={styles.skeletonRow}>
+              <View style={styles.skeletonThumb} />
+              <View style={styles.skeletonBody}>
+                <View style={[styles.skeletonLine, { width: '35%' }]} />
+                <View style={[styles.skeletonLine, styles.skeletonTitle, { width: '85%' }]} />
+                <View style={[styles.skeletonLine, { width: '60%' }]} />
+              </View>
+            </View>
+          ))}
+        </>
+      )}
+    </Animated.View>
   );
 }
 
@@ -44,7 +81,9 @@ export function StateMessage({
 }) {
   return (
     <View style={styles.message}>
-      <View style={styles.mark} />
+      <View style={styles.mark}>
+        <SunMark size={56} />
+      </View>
       <AppText variant="heading" style={styles.center} accessibilityRole="header">
         {title}
       </AppText>
@@ -53,16 +92,10 @@ export function StateMessage({
           {body}
         </AppText>
       ) : null}
-      {actionLabel && onAction ? (
-        <View style={styles.action}>
-          <Button label={actionLabel} onPress={onAction} />
-        </View>
-      ) : null}
-      {secondaryLabel && onSecondary ? (
-        <View style={styles.action}>
-          <Button label={secondaryLabel} variant="secondary" onPress={onSecondary} />
-        </View>
-      ) : null}
+      <View style={styles.actions}>
+        {actionLabel && onAction ? <Button label={actionLabel} onPress={onAction} /> : null}
+        {secondaryLabel && onSecondary ? <Button label={secondaryLabel} variant="secondary" onPress={onSecondary} /> : null}
+      </View>
     </View>
   );
 }
@@ -80,10 +113,18 @@ export function errorCopy(kind: LoadErrorKind | null): { title: string; body: st
   }
 }
 
-export function Banner({ text, tone }: { text: string; tone: 'warning' | 'neutral' }) {
+/** A one-line notice: a tag, then the text. `tag` defaults to none. */
+export function Banner({ text, tone, tag }: { text: string; tone: 'warning' | 'neutral'; tag?: string }) {
   return (
     <View style={[styles.banner, tone === 'warning' ? styles.bannerWarning : styles.bannerNeutral]} accessibilityRole="alert">
-      <AppText variant="caption" tone={tone === 'warning' ? 'warning' : 'secondary'}>
+      {tag ? (
+        <View style={[styles.tag, tone === 'warning' ? styles.tagWarning : styles.tagNeutral]}>
+          <AppText variant="eyebrow" style={{ color: colors.onAccent }}>
+            {tag}
+          </AppText>
+        </View>
+      ) : null}
+      <AppText variant="caption" tone={tone === 'warning' ? 'primary' : 'secondary'} style={styles.bannerText}>
         {text}
       </AppText>
     </View>
@@ -95,17 +136,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     gap: spacing.lg,
   },
-  skeletonCard: {
-    backgroundColor: colors.surface,
+  skeletonSpotlight: {
+    height: 360,
     borderRadius: radii.card,
-    overflow: 'hidden',
+    backgroundColor: colors.raised,
   },
-  skeletonPoster: {
-    height: 148,
+  skeletonHero: {
+    height: 320,
+    marginHorizontal: -spacing.lg,
+    backgroundColor: colors.raised,
+  },
+  skeletonRow: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+  },
+  skeletonThumb: {
+    width: 96,
+    height: 112,
+    borderRadius: radii.tile,
     backgroundColor: colors.raised,
   },
   skeletonBody: {
-    padding: spacing.lg,
+    flex: 1,
+    paddingVertical: spacing.sm,
     gap: spacing.sm,
   },
   skeletonLine: {
@@ -113,40 +166,67 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: colors.raised,
   },
+  skeletonTitle: {
+    height: 18,
+  },
   message: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xxl,
+    paddingVertical: spacing.xxxl,
     alignItems: 'center',
     gap: spacing.md,
   },
   mark: {
-    width: 48,
-    height: 48,
-    borderRadius: radii.pill,
-    backgroundColor: colors.raised,
-    borderWidth: 2,
-    borderColor: colors.accent,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
   },
   center: {
     textAlign: 'center',
   },
-  action: {
+  actions: {
     alignSelf: 'stretch',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
   },
   banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
     marginHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: radii.chip,
+    borderRadius: radii.tile,
     borderWidth: 1,
   },
   bannerWarning: {
-    borderColor: colors.warning,
+    borderColor: '#5A4519',
     backgroundColor: colors.surface,
   },
   bannerNeutral: {
     borderColor: colors.border,
     backgroundColor: colors.surface,
+  },
+  bannerText: {
+    flex: 1,
+  },
+  tag: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: radii.pill,
+  },
+  tagWarning: {
+    backgroundColor: colors.warning,
+  },
+  tagNeutral: {
+    backgroundColor: colors.textSecondary,
   },
 });

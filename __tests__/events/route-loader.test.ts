@@ -2,6 +2,7 @@
  * Web loader for /events/[slug] — Spec 002 REQ-010, REQ-017, REQ-047, D22.
  * Uses the sample data source (no EXPO_PUBLIC_MOVA_DATA_SOURCE in tests).
  */
+import { colors } from '../../src/design/tokens';
 import { loader } from '../../src/app/events/[slug]';
 import * as repositoryModule from '../../src/features/events/repository';
 import { isDocumentRequest, toInitialEvent, type EventRouteData } from '../../src/features/events/route-data';
@@ -51,7 +52,7 @@ describe('loader', () => {
       expect(html).toContain('Event not available');
       expect(html).toContain('noindex');
       expect(html).toContain('<html lang="en">'); // active locale (CR-13)
-      expect(html).toContain('background:#0B0B10'); // design token, not a copy
+      expect(html).toContain(`background:${colors.bg}`); // design token, not a copy
     } finally {
       global.__DEV__ = previous;
     }

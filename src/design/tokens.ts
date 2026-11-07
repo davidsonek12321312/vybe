@@ -1,21 +1,32 @@
 /**
- * MOVA premium dark design tokens — Spec 002 REQ-049, design A4.
- * Every text/background pair in TEXT_PAIRS is checked at >= 4.5:1 by
- * __tests__/design/contrast.test.ts.
+ * MOVA "Afterglow" dark design tokens — design-lab prototype (design/mova-ui-lab).
+ * A warm night ground and a sunset-coral accent replace the Spec 002 A4
+ * violet palette; shipping it needs a D21 palette amendment (see
+ * design-lab/DESIGN_REVIEW.md). Every text/background pair in TEXT_PAIRS is
+ * checked at >= 4.5:1 by __tests__/events/data.test.ts.
  */
 export const colors = {
-  bg: '#0B0B10',
-  surface: '#15151D',
-  raised: '#1F1F2A',
-  border: '#2E2E3A',
-  text: '#F5F5F7',
-  textSecondary: '#A8A8B3',
-  accent: '#9D8CFF',
-  onAccent: '#0B0B10',
-  success: '#4ADE80',
-  warning: '#FBBF24',
-  danger: '#F87171',
-  scrim: 'rgba(11, 11, 16, 0.78)',
+  bg: '#0E0C0B',
+  surface: '#181513',
+  raised: '#231F1C',
+  border: '#332E2A',
+  borderStrong: '#4A433D',
+  text: '#F8F4EF',
+  textSecondary: '#B9B0A6',
+  /** Afterglow coral: brand, primary actions, active filters. */
+  accent: '#FF7A59',
+  onAccent: '#1A0B06',
+  /** Tinted ground for accent text (selected rows, the solo card). */
+  accentSoft: '#2E1A14',
+  /** Sea glass: the Solo-friendly signal. */
+  sea: '#5CD6C5',
+  seaSoft: '#12292A',
+  success: '#5EE38F',
+  warning: '#FFC24B',
+  danger: '#FF6B6B',
+  scrim: 'rgba(8, 6, 5, 0.78)',
+  /** Chips laid on photographs: opaque enough for AA white text over a white photo. */
+  glass: 'rgba(14, 12, 11, 0.84)',
 } as const;
 
 export type ColorToken = keyof typeof colors;
@@ -31,31 +42,48 @@ export const TEXT_PAIRS: readonly (readonly [ColorToken, ColorToken])[] = [
   ['accent', 'bg'],
   ['accent', 'surface'],
   ['accent', 'raised'],
+  ['accent', 'accentSoft'],
+  ['text', 'accentSoft'],
   ['onAccent', 'accent'],
+  ['onAccent', 'warning'],
+  ['onAccent', 'textSecondary'],
+  ['sea', 'surface'],
+  ['sea', 'seaSoft'],
+  ['text', 'seaSoft'],
   ['success', 'surface'],
   ['warning', 'surface'],
   ['danger', 'surface'],
   ['danger', 'bg'],
 ];
 
-export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
+export const spacing = { xxs: 2, xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, xxxl: 48 } as const;
 
-export const radii = { chip: 12, card: 16, sheet: 24, pill: 999 } as const;
+export const radii = { tile: 14, chip: 999, card: 20, sheet: 28, pill: 999 } as const;
 
+/** System fonts (SF Pro, Roboto, system-ui) keep EN/VI/RU glyph coverage; the scale does the brand work. */
 export const typography = {
-  display: { fontSize: 34, lineHeight: 40, fontWeight: '700' },
-  title: { fontSize: 28, lineHeight: 34, fontWeight: '700' },
-  heading: { fontSize: 22, lineHeight: 28, fontWeight: '700' },
-  subheading: { fontSize: 17, lineHeight: 22, fontWeight: '600' },
-  body: { fontSize: 15, lineHeight: 22, fontWeight: '400' },
-  caption: { fontSize: 13, lineHeight: 18, fontWeight: '400' },
-  label: { fontSize: 13, lineHeight: 18, fontWeight: '600' },
+  hero: { fontSize: 40, lineHeight: 44, fontWeight: '800', letterSpacing: -1.2 },
+  display: { fontSize: 34, lineHeight: 38, fontWeight: '800', letterSpacing: -0.9 },
+  title: { fontSize: 28, lineHeight: 32, fontWeight: '800', letterSpacing: -0.6 },
+  heading: { fontSize: 22, lineHeight: 27, fontWeight: '700', letterSpacing: -0.3 },
+  subheading: { fontSize: 17, lineHeight: 22, fontWeight: '700', letterSpacing: -0.2 },
+  body: { fontSize: 16, lineHeight: 24, fontWeight: '400' },
+  bodyStrong: { fontSize: 16, lineHeight: 22, fontWeight: '600' },
+  caption: { fontSize: 13, lineHeight: 18, fontWeight: '500' },
+  label: { fontSize: 13, lineHeight: 18, fontWeight: '700' },
+  eyebrow: { fontSize: 12, lineHeight: 16, fontWeight: '800', letterSpacing: 1.4, textTransform: 'uppercase' },
 } as const;
 
 export type TypographyVariant = keyof typeof typography;
 
+/** Times, dates and prices line up in lists. */
+export const tabularNums = { fontVariant: ['tabular-nums'] } as const;
+
 /** Minimum touch target (NFR-002). */
 export const MIN_TOUCH = 44;
+
+/** Layout breakpoints (dp). */
+export const breakpoints = { medium: 720, wide: 1080 } as const;
 
 function channel(value: number): number {
   const c = value / 255;

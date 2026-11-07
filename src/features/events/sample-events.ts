@@ -70,7 +70,7 @@ export function buildSampleEvents(now: Date, city: City = SAMPLE_CITY): EventDet
       mapsUrl: 'https://maps.app.goo.gl/sample-my-khe',
       price: { type: 'free' },
       soloFriendly: true,
-      soloDetails: 'Look for the violet MOVA flag by lifeguard tower 3. At 18:15 there is a short intro circle.',
+      soloDetails: 'Look for the coral MOVA flag by lifeguard tower 3. At 18:15 there is a short intro circle.',
       description: 'An easy evening on the beach to meet locals, travellers and nomads.',
       whatToExpect: 'Casual conversation, music and a short intro circle. Most people stay for an hour or two.',
     },

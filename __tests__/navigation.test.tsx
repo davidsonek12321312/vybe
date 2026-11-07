@@ -52,10 +52,11 @@ describe('Discover (Spec 002)', () => {
   test('active language filter shows its value in the chip label (S6, CR-8)', async () => {
     await render(<DiscoverScreen />);
     expect(await screen.findByText('Da Nang Beach Social #001')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('checkbox', { name: 'Language' }));
+    // The chip opens a sheet, so it is a button; its name carries the value (WCAG 4.1.2, NFR-002).
+    await fireEvent.press(screen.getByRole('button', { name: 'Language' }));
     await fireEvent.press(await screen.findByRole('checkbox', { name: /Russian|Русский|RU/ }));
     await fireEvent.press(screen.getByRole('button', { name: 'Apply' }));
-    expect(await screen.findByRole('checkbox', { name: 'Language: RU', checked: true })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Language: RU' })).toBeTruthy();
   });
 
   test('offline error with Retry, no raw error text (S18)', async () => {
