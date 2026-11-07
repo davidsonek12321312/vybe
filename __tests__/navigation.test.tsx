@@ -49,6 +49,15 @@ describe('Discover (Spec 002)', () => {
     expect(screen.getByText('Da Nang Beach Social #001')).toBeTruthy();
   });
 
+  test('active language filter shows its value in the chip label (S6, CR-8)', async () => {
+    await render(<DiscoverScreen />);
+    expect(await screen.findByText('Da Nang Beach Social #001')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Language' }));
+    await fireEvent.press(await screen.findByRole('button', { name: /Russian|Русский|RU/ }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Apply' }));
+    expect(await screen.findByRole('button', { name: 'Language: RU' })).toBeTruthy();
+  });
+
   test('offline error with Retry, no raw error text (S18)', async () => {
     const repository: EventRepository = {
       listUpcoming: () => Promise.reject(new LoadError('offline')),

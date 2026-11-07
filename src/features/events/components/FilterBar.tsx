@@ -36,7 +36,9 @@ export function FilterBar({
 }) {
   const [sheet, setSheet] = useState<SheetKind | null>(null);
   const active = activeFilterCount(filters);
-  const multi = (base: string, count: number) => (count > 0 ? `${base} · ${count}` : base);
+  // Show the active value(s) in the label (S6: "Language: RU"); a count when there are several.
+  const withValues = (base: string, values: string[]) =>
+    values.length === 0 ? base : values.length === 1 ? `${base}: ${values[0]}` : `${base}: ${values.join(', ')} · ${values.length}`;
 
   return (
     <View style={styles.wrapper}>
@@ -52,7 +54,7 @@ export function FilterBar({
           onPress={() => onChange({ ...filters, soloOnly: !filters.soloOnly })}
         />
         <Chip
-          label={multi(t('filters.language'), filters.languages.length)}
+          label={withValues(t('filters.language'), filters.languages.map((code) => code.toUpperCase()))}
           selected={filters.languages.length > 0}
           onPress={() => setSheet('language')}
         />
@@ -62,7 +64,7 @@ export function FilterBar({
           onPress={() => setSheet('price')}
         />
         <Chip
-          label={multi(t('filters.category'), filters.categories.length)}
+          label={withValues(t('filters.category'), filters.categories.map((category) => t(`category.${category}`)))}
           selected={filters.categories.length > 0}
           onPress={() => setSheet('category')}
         />
