@@ -82,9 +82,11 @@ export async function generateMetadata(_request: unknown, params: RouteParams): 
 export default function EventRoute(): React.JSX.Element {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const initial = useRouteEvent();
+  const safeSlug = typeof slug === 'string' ? slug : '';
   return (
     <EventDetailScreen
-      slug={typeof slug === 'string' ? slug : ''}
+      key={safeSlug} // CR-15: a new slug starts a fresh detail state
+      slug={safeSlug}
       initialEvent={initial?.status === 'found' ? initial.event : null}
       initiallyNotAvailable={initial?.status === 'not_available'}
     />

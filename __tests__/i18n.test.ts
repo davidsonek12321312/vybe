@@ -69,3 +69,22 @@ describe('t() function', () => {
     expect(t('discover.count', { count: 4 })).toBe('Events: 4');
   });
 });
+
+describe('i18n placeholders (CR-16)', () => {
+  const placeholders = (text: string) => [...text.matchAll(/%\{(\w+)\}/g)].map((m) => m[1]).sort();
+
+  test('VI and RU use the same %{placeholders} as EN for every key', () => {
+    const mismatched: string[] = [];
+    for (const section of Object.keys(enAny)) {
+      for (const [key, value] of Object.entries(enAny[section])) {
+        for (const [name, locale] of [['vi', viAny], ['ru', ruAny]] as const) {
+          const other = locale[section]?.[key];
+          if (typeof other === 'string' && placeholders(other).join() !== placeholders(value).join()) {
+            mismatched.push(`${name}:${section}.${key}`);
+          }
+        }
+      }
+    }
+    expect(mismatched).toEqual([]);
+  });
+});
