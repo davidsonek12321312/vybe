@@ -2,7 +2,7 @@
  * Screen tests — Spec 001 REQ-002, REQ-003; Spec 002 S1, S11, S12, S16, S18,
  * S21, S24, S34. Native modules are mocked in jest.setup.js.
  */
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import NotFoundScreen from '../src/app/+not-found';
 import type { AppContext } from '../src/features/events/repository';
@@ -113,6 +113,27 @@ describe('Event details (Spec 002)', () => {
     );
     expect(screen.getByText('Event not available')).toBeTruthy();
     expect(getBySlug).not.toHaveBeenCalled();
+  });
+});
+
+describe('Event details with only a cached summary (review CR-2, REQ-032/035, S18)', () => {
+  test('detail fetch fails → partial view stays, with an error banner and Retry', async () => {
+    const event = liveEvent();
+    const getBySlug = jest
+      .fn<Promise<EventDetail | null>, [string]>()
+      .mockRejectedValueOnce(new LoadError('offline'))
+      .mockResolvedValue(event);
+    const repository: EventRepository = { listUpcoming: async () => [event], getBySlug };
+    const list = await render(<DiscoverScreen context={live(repository)} />);
+    expect(await screen.findByText(event.title)).toBeTruthy();
+    await list.unmount();
+
+    await render(<EventDetailScreen slug={event.slug} context={live(repository)} />);
+    expect(await screen.findByText("You're offline")).toBeTruthy();
+    expect(screen.getAllByText(event.title).length).toBeGreaterThan(0);
+    await fireEvent.press(screen.getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(screen.queryByText("You're offline")).toBeNull());
+    expect(getBySlug).toHaveBeenCalledTimes(2);
   });
 });
 

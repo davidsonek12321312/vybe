@@ -13,7 +13,7 @@ import { getActiveLocale, t } from '@/i18n';
 import { EventBadges } from '../components/EventBadges';
 import { EventPoster } from '../components/EventPoster';
 import { SafeText } from '../components/SafeText';
-import { SkeletonCards, StateMessage, errorCopy } from '../components/StateViews';
+import { Banner, SkeletonCards, StateMessage, errorCopy } from '../components/StateViews';
 import { languageNames, priceLabel } from '../format';
 import { openExternal } from '../open-external';
 import { getAppContext, type AppContext } from '../repository';
@@ -125,6 +125,19 @@ export function EventDetailScreen({
     <SafeAreaView style={styles.screen} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.column}>
+          {!detail.event ? (
+            detail.status === 'error' ? (
+              <View style={styles.partial}>
+                <Banner text={errorCopy(detail.errorKind).title} tone="warning" />
+                {detail.errorKind === 'config' ? null : <Button label={t('states.retry')} variant="secondary" onPress={detail.retry} />}
+              </View>
+            ) : (
+              <View style={styles.partial}>
+                <Banner text={detail.slow ? t('states.slow') : t('states.loading')} tone="neutral" />
+                {detail.slow ? <Button label={t('states.retry')} variant="secondary" onPress={detail.retry} /> : null}
+              </View>
+            )
+          ) : null}
           {event.status === 'cancelled' ? (
             <View style={[styles.banner, styles.bannerDanger]} accessibilityRole="alert">
               <AppText variant="subheading" tone="danger">
@@ -286,6 +299,9 @@ const styles = StyleSheet.create({
   bannerDanger: { borderColor: colors.danger },
   bannerWarning: { borderColor: colors.warning },
   bannerNeutral: { borderColor: colors.border },
+  partial: {
+    gap: spacing.sm,
+  },
   poster: {
     borderRadius: radii.card,
     overflow: 'hidden',
