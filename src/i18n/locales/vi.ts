@@ -6,10 +6,10 @@ import type { LocaleShape } from './en';
 
 const vi: LocaleShape = {
   app: {
-    name: 'Vybe',
+    name: 'MOVA',
   },
   home: {
-    title: 'Chào mừng đến với Vybe',
+    title: 'Chào mừng đến với MOVA',
     tagline: 'Khám phá những gì đang xảy ra ở Đà Nẵng',
     comingSoon: 'Sự kiện tại Đà Nẵng sắp ra mắt.',
   },

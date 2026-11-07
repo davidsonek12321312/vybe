@@ -6,10 +6,10 @@ import type { LocaleShape } from './en';
 
 const ru: LocaleShape = {
   app: {
-    name: 'Vybe',
+    name: 'MOVA',
   },
   home: {
-    title: 'Добро пожаловать в Vybe',
+    title: 'Добро пожаловать в MOVA',
     tagline: 'Узнайте, что происходит в Дананге',
     comingSoon: 'События в Дананге скоро появятся.',
   },

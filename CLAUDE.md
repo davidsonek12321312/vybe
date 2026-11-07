@@ -1,4 +1,4 @@
-# Vybe — Claude Code Operating Manual
+# MOVA — Claude Code Operating Manual
 
 Canonical policy: `AGENTS.md` and `docs/SDD_WORKFLOW.md`. Product: `docs/PRODUCT_VISION.md`. Decisions: `docs/DECISIONS.md`.
 

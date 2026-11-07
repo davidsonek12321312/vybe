@@ -1,4 +1,4 @@
-# Repo-wide Agent Instructions — Vybe
+# Repo-wide Agent Instructions — MOVA
 
 Read `docs/PRODUCT_VISION.md`, `docs/SDD_WORKFLOW.md`, `docs/DECISIONS.md` and any active `.kiro/specs/<NNN>-<feature>/*` documents first.
 

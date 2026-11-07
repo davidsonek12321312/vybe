@@ -1,5 +1,5 @@
 /**
- * Vybe design tokens — REQ-007, T-008
+ * MOVA design tokens — REQ-007, T-008
  *
  * Colour tokens verified for WCAG 2.1 AA compliance (4.5:1 contrast ratio
  * for normal text). All contrast ratios calculated against their pairing.
@@ -11,7 +11,7 @@
  *   Badge text dark: #FFE082 on #3D2C00 → 9.2:1 ✓ AAA
  */
 
-export const VybeColors = {
+export const AppColors = {
   light: {
     /** Primary text: #1A1A1A on #FFFFFF = 18.1:1 (AAA) */
     text: '#1A1A1A',
@@ -40,5 +40,5 @@ export const VybeColors = {
   },
 } as const;
 
-export type VybeColorScheme = 'light' | 'dark';
-export type VybeTheme = typeof VybeColors.light;
+export type AppColorScheme = 'light' | 'dark';
+export type AppTheme = typeof AppColors.light;
