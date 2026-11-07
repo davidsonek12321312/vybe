@@ -116,7 +116,7 @@ export function toEventDetail(value: unknown, options: MappingOptions): EventDet
   if (!summary || !isRow(value)) return null;
   const description = text(value.description);
   const organizerName = text(value.organizer_name);
-  const updatedAt = instant(value.updated_at) ?? summary.startsAt;
+  const updatedAt = instant(value.updated_at);
   if (!description || !organizerName) return null;
 
   const maps = text(value.maps_url);

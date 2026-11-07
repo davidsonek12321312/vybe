@@ -62,7 +62,8 @@ export interface EventDetail extends EventSummary {
   changeNote: string | null;
   /** Temporary Google Forms bridge (REQ-053). */
   registrationUrl: string | null;
-  updatedAt: Date;
+  /** null when the stored value is missing or invalid: the screen then hides the line (CR-12b). */
+  updatedAt: Date | null;
 }
 
 export type DateFilter = 'any' | 'today' | 'tomorrow' | 'weekend' | 'next7';

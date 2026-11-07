@@ -166,6 +166,11 @@ describe('row validation (REQ-030, 037)', () => {
     expect(toEventDetail({ ...base, maps_url: 'https://www.google.com/maps/place/Da+Nang' }, OPTIONS)?.mapsUrl).toBe('https://www.google.com/maps/place/Da+Nang');
   });
 
+  test('an invalid updated_at is null, not a made-up date (CR-12b)', () => {
+    expect(toEventDetail({ ...ROW, updated_at: 'not a date' }, OPTIONS)?.updatedAt).toBeNull();
+    expect(toEventDetail(ROW, OPTIONS)?.updatedAt?.toISOString()).toBe('2026-12-01T10:00:00.000Z');
+  });
+
   test('Solo-friendly without details shows no badge (S16)', () => {
     expect(toEventSummary({ ...ROW, solo_details: null }, OPTIONS)?.soloFriendly).toBe(false);
   });

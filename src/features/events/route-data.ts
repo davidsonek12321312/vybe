@@ -38,7 +38,7 @@ export type EventPayload = Omit<EventDetail, 'startsAt' | 'endsAt' | 'materialCh
   startsAt: string;
   endsAt: string;
   materialChangedAt: string | null;
-  updatedAt: string;
+  updatedAt: string | null;
 };
 
 /**
@@ -75,7 +75,7 @@ export function toEventPayload(event: EventDetail): EventPayload {
     startsAt: event.startsAt.toISOString(),
     endsAt: event.endsAt.toISOString(),
     materialChangedAt: event.materialChangedAt ? event.materialChangedAt.toISOString() : null,
-    updatedAt: event.updatedAt.toISOString(),
+    updatedAt: event.updatedAt ? event.updatedAt.toISOString() : null,
   };
 }
 
@@ -85,7 +85,7 @@ export function fromEventPayload(payload: EventPayload): EventDetail {
     startsAt: new Date(payload.startsAt),
     endsAt: new Date(payload.endsAt),
     materialChangedAt: payload.materialChangedAt ? new Date(payload.materialChangedAt) : null,
-    updatedAt: new Date(payload.updatedAt),
+    updatedAt: payload.updatedAt ? new Date(payload.updatedAt) : null,
   };
 }
 
