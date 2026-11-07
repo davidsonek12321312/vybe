@@ -21,3 +21,13 @@ dev server), at 390x844, 768x1024, 1280x800 and 1920x1080. Screenshots in `redes
 Known and still open: SSR always renders English, so a VI or RU visitor can see a hydration mismatch
 (found in the design-lab review); `npm run ssr:smoke` fails 3 loader checks on this Windows machine
 (Node 26) on the commit before the redesign as well, while CI on Node 22 passes it.
+
+## Re-run after amendment v0.7 (reference look), 2026-11-07
+
+Palette (black, white pills, red signal), five-icon tab bar, italic upper-case titles, red live badge.
+Screenshots: `redesign-acceptance/v07-final-390|768|1280|1920.png`, `v07-tabbar-390.png`, `v07b-titles-390.png`.
+At all four viewports: 8 cards, `Events: 8`, 0 skeletons, no horizontal scroll, 1 h1, 0 console errors,
+0 broken images, 0 touch targets under 44 px; `theme-color` #0B0B0C. Tab bar at 390 px: 5 tabs, Discover
+selected, the other four `aria-disabled`. Jest 180/180, typecheck and lint clean.
+Still open: keyboard and focus pass and offline pass on the new look; the VI and RU tab labels need a
+native-speaker review; icons are a first drawing and will be refined.

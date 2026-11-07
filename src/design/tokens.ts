@@ -53,6 +53,8 @@ export const TEXT_PAIRS: readonly (readonly [ColorToken, ColorToken])[] = [
   ['text', 'seaSoft'],
   ['success', 'surface'],
   ['warning', 'surface'],
+  ['signal', 'bg'],
+  ['signal', 'surface'],
   ['danger', 'surface'],
   ['danger', 'bg'],
 ];

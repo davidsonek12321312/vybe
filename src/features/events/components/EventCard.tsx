@@ -233,19 +233,19 @@ const styles = StyleSheet.create({
   },
   livePill: {
     borderWidth: 1,
-    borderColor: colors.success,
+    borderColor: colors.signal,
   },
   liveDot: {
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: colors.success,
+    backgroundColor: colors.signal,
   },
   liveDotSmall: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.success,
+    backgroundColor: colors.signal,
   },
   // Spotlight
   spotlightPhoto: {
