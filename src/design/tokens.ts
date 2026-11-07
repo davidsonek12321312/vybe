@@ -72,6 +72,9 @@ export const typography = {
   bodyStrong: { fontSize: 16, lineHeight: 22, fontWeight: '600' },
   caption: { fontSize: 13, lineHeight: 18, fontWeight: '500' },
   label: { fontSize: 13, lineHeight: 18, fontWeight: '700' },
+  /** Event and group titles in the reference design: heavy, italic, upper case. */
+  eventTitle: { fontSize: 24, lineHeight: 28, fontWeight: '800', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: -0.4 },
+  eventTitleLarge: { fontSize: 34, lineHeight: 38, fontWeight: '800', fontStyle: 'italic', textTransform: 'uppercase', letterSpacing: -0.6 },
   eyebrow: { fontSize: 12, lineHeight: 16, fontWeight: '800', letterSpacing: 1.4, textTransform: 'uppercase' },
 } as const;
 

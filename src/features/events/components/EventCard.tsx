@@ -109,7 +109,7 @@ export function EventCard({
                   <AppText variant="eyebrow" style={styles.onPhotoText}>
                     {text.category}
                   </AppText>
-                  <AppText variant="display" style={[styles.onPhotoText, cancelled && styles.struck]} numberOfLines={3}>
+                  <AppText variant="eventTitleLarge" style={[styles.onPhotoText, cancelled && styles.struck]} numberOfLines={3}>
                     {event.title}
                   </AppText>
                   <AppText variant="bodyStrong" style={[styles.onPhotoText, tabularNums]}>
@@ -140,7 +140,7 @@ export function EventCard({
                     {live ? `${t('status.happeningNow')} · ${text.time}${text.cityTime}` : text.when}
                   </AppText>
                 </View>
-                <AppText variant="subheading" numberOfLines={2} style={cancelled && styles.struck}>
+                <AppText variant="eventTitle" numberOfLines={2} style={cancelled && styles.struck}>
                   {event.title}
                 </AppText>
                 <AppText variant="caption" tone="secondary">
@@ -173,7 +173,7 @@ export function EventCard({
                 <AppText variant="label" tone="accent" style={tabularNums}>
                   {text.when}
                 </AppText>
-                <AppText variant="subheading" numberOfLines={2} style={cancelled && styles.struck}>
+                <AppText variant="eventTitle" numberOfLines={2} style={cancelled && styles.struck}>
                   {event.title}
                 </AppText>
                 <AppText variant="caption" tone="secondary">

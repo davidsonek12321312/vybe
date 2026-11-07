@@ -230,7 +230,7 @@ export function EventDetailScreen({
       <AppText variant="eyebrow" tone="accent">
         {t(`category.${event.category}`)}
       </AppText>
-      <AppText variant="title" {...headingProps(1)} style={event.status === 'cancelled' && styles.struck}>
+      <AppText variant="eventTitleLarge" {...headingProps(1)} style={event.status === 'cancelled' && styles.struck}>
         {event.title}
       </AppText>
       <EventBadges event={event} now={now} />
