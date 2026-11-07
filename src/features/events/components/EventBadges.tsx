@@ -10,8 +10,11 @@ import { t } from '@/i18n';
 import { isHappeningNow } from '../time';
 import type { EventSummary } from '../types';
 
-export function EventBadges({ event, now }: { event: EventSummary; now: Date }) {
-  const badges: { key: string; label: string; tone: 'neutral' | 'accent' | 'success' | 'warning' | 'danger' }[] = [];
+type BadgeSpec = { key: string; label: string; tone: 'neutral' | 'accent' | 'success' | 'warning' | 'danger' };
+
+/** Badge list shared by the visible badges and the card's accessible name (review CR-1). */
+export function eventBadges(event: EventSummary, now: Date): BadgeSpec[] {
+  const badges: BadgeSpec[] = [];
   if (event.status === 'cancelled') badges.push({ key: 'cancelled', label: t('status.cancelled'), tone: 'danger' });
   if (event.status === 'published' && isHappeningNow(event, now)) {
     badges.push({ key: 'now', label: t('status.happeningNow'), tone: 'success' });
@@ -22,7 +25,11 @@ export function EventBadges({ event, now }: { event: EventSummary; now: Date }) 
   if (event.soloFriendly) badges.push({ key: 'solo', label: t('badge.solo'), tone: 'accent' });
   if (event.ageRestriction) badges.push({ key: 'age', label: t('badge.age', { age: event.ageRestriction }), tone: 'neutral' });
   if (event.isSample) badges.push({ key: 'sample', label: t('status.sample'), tone: 'warning' });
+  return badges;
+}
 
+export function EventBadges({ event, now }: { event: EventSummary; now: Date }) {
+  const badges = eventBadges(event, now);
   if (badges.length === 0) return null;
   return (
     <View style={styles.row}>

@@ -12,7 +12,7 @@ import { languageCodes, priceLabel, venueLine } from '../format';
 import { deviceUsesCityTime, formatDay, formatTime } from '../time';
 import type { EventSummary } from '../types';
 
-import { EventBadges } from './EventBadges';
+import { EventBadges, eventBadges } from './EventBadges';
 import { EventPoster } from './EventPoster';
 
 export function EventCard({
@@ -32,11 +32,12 @@ export function EventCard({
   const cityTime = deviceUsesCityTime(now, timeZone) ? '' : ` (${t('event.cityTime', { city: event.city.name })})`;
   const when = `${day} · ${time}${cityTime}`;
   const meta = `${venueLine(event)} · ${languageCodes(event)} · ${priceLabel(event, locale)}`;
+  const badgeText = eventBadges(event, now).map((badge) => badge.label).join(', ');
 
   return (
     <Pressable
       accessibilityRole="link"
-      accessibilityLabel={`${event.title}. ${when}. ${meta}`}
+      accessibilityLabel={`${event.title}. ${when}. ${meta}${badgeText ? `. ${badgeText}` : ''}`}
       onPress={() => onPress(event.slug)}
       style={({ pressed }) => [styles.pressable, pressed && styles.pressed]}>
       <Card>
