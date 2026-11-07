@@ -1,9 +1,9 @@
-# Gitleaks configuration for Vybe (Spec 001 REQ-008, NFR-002; ADR-0007)
+# Gitleaks configuration for MOVA (Spec 001 REQ-008, NFR-002; ADR-0007)
 # Local:  npm run scan:secrets          (working tree)
 #         npm run scan:secrets:history  (git history)
 # CI:     .github/workflows/ci.yml, job "secrets"
 
-title = "vybe"
+title = "mova"
 
 [extend]
 # Start from the full upstream gitleaks rule set.

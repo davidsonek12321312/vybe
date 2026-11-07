@@ -1,5 +1,5 @@
 #!/bin/sh
-# Vybe pre-commit hook — Spec 001 REQ-008(c).
+# MOVA pre-commit hook — Spec 001 REQ-008(c).
 # Blocks the commit when gitleaks finds a secret in the staged changes.
 # Installed by `npm install` (prepare script) or `npm run hooks:install`.
 

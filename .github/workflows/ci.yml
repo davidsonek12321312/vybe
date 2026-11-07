@@ -45,9 +45,9 @@ jobs:
       - run: npm test
       - run: npm run export:web
 
-      # Informational until the SDK 58 upgrade (ADR-0006).
-      - name: Dependency audit (non-blocking)
-        run: npm audit --omit=dev --audit-level=high || echo "::warning::npm audit reports high-severity advisories (accepted in docs/DECISIONS.md ADR-0006)"
+      # Blocking since the Expo SDK 58 upgrade resolved ADR-0006.
+      - name: Dependency audit (high severity fails)
+        run: npm audit --omit=dev --audit-level=high
 
   secrets:
     name: Secret scan (gitleaks)

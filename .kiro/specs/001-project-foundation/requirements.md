@@ -1,6 +1,6 @@
 # Spec 001: Project Foundation — Requirements
 ## Status: APPROVED
-## Version: 0.3
+## Version: 0.4
 ## Approved by: CEO
 ## Approved on: 2026-11-06
 
@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Establish a reproducible, governed, cross-platform foundation for Vybe: a
+Establish a reproducible, governed, cross-platform foundation for MOVA: a
 working application shell with typed navigation, baseline quality tooling,
 localization infrastructure, a deployable static web export, and the repository
 governance artefacts that all subsequent specs depend on.
@@ -113,7 +113,7 @@ controls, booking links, or claims that an event is confirmed. The shell MAY
 show a localized "coming soon" message. Real and sample events are both deferred
 to Spec 002, where their disclosure and source separation will be specified.
 
-*Note: `VYBE_ENV` and multi-environment data configuration are out of scope until
+*Note: `MOVA_ENV` and multi-environment data configuration are out of scope until
 a later specification introduces real data sources.*
 
 ### REQ-006: Localization infrastructure
@@ -320,7 +320,7 @@ Spec 001 design or implementation:
 - Beach Social #001 public launch or any public event publication
 - Production deployment pipeline (CI/CD beyond build validation)
 - Push notifications
-- VYBE_ENV environment variable or multi-environment configuration (deferred
+- MOVA_ENV environment variable or multi-environment configuration (deferred
   until a live data source exists)
 
 ---
@@ -385,8 +385,9 @@ recorded in `design.md` before design is approved:
 | 0.2 | 2026-11-06 | Kiro (requirements engineer) | Applied engineering lead decisions; resolved H-1, H-2, H-3, M-1–M-5, S-1, S-2, SEC-1, SEC-2, SEC-3; added Scenarios 1–7; added traceability matrix; added assets/trust-boundary section; deferred VYBE_ENV; added REQ-006 through REQ-009; replaced Scenario C with REQ-009 + Scenario 7 |
 | 0.3 | 2026-11-06 | ChatGPT (independent requirements review) | Clarified Expo Router special not-found route, Windows-first iOS tests, accurate accessibility criteria, deterministic localization, no events in foundation, secret-scan enforcement, additional mobile/accessibility acceptance scenarios. DRAFT pending founder approval. |
 | 0.3 (approval) | 2026-11-06 | Claude Code (recording only) | CEO approval of v0.3 recorded on CEO instruction. Requirement text is identical to the CEO-supplied v0.3 file |
+| 0.4 | 2026-11-06 | Claude Code (CEO-approved amendment) | Product renamed Vybe → MOVA (ADR-0008), including the deferred `MOVA_ENV` name. No behavioural change. Approved by the CEO on 2026-11-06 together with the Expo SDK 58 design amendment |
 
 ---
 
-**This document is APPROVED (v0.3, CEO, 2026-11-06). Any change requires a spec
+**This document is APPROVED (v0.4, CEO, 2026-11-06). Any change requires a spec
 amendment with a new version and fresh CEO approval.**

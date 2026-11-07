@@ -1,4 +1,4 @@
-# Vybe — Product Charter (v0.1)
+# MOVA — Product Charter (v0.1)
 
 ## Problem
 People in Da Nang discover social activities through scattered Telegram/Facebook/Instagram channels. New arrivals and solo visitors often lack a simple way to find trustworthy events, RSVP, know what to expect, and meet other attendees. Hosts handle reservations and updates manually. These are **hypotheses**, not validated findings.

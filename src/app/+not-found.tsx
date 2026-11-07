@@ -12,11 +12,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { t } from '@/i18n';
-import { VybeColors } from '@/theme';
+import { AppColors } from '@/theme';
 
 export default function NotFoundScreen(): React.JSX.Element {
   const scheme = useColorScheme();
-  const colors = VybeColors[scheme === 'dark' ? 'dark' : 'light'];
+  const colors = AppColors[scheme === 'dark' ? 'dark' : 'light'];
 
   return (
     <>

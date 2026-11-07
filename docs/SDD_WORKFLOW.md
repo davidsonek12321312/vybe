@@ -1,4 +1,4 @@
-# Vybe SDD Operating Procedure — version 0.1
+# MOVA SDD Operating Procedure — version 0.1
 
 Derived from the founder-provided *Spec-Driven Development with Claude Code & Git* manual (April 2026). This project adapts its source location from `/spec/` to **`.kiro/specs/`**, because Kiro is the primary development IDE and must be the canonical source of truth. Never maintain duplicated specs.
 
