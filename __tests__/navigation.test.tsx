@@ -44,7 +44,7 @@ describe('Discover (Spec 002)', () => {
   test('the Solo-friendly chip keeps only solo-friendly events (REQ-026)', async () => {
     await render(<DiscoverScreen />);
     expect(await screen.findByText('Street Food Walk: An Thuong')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Solo-friendly' }));
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Solo-friendly' }));
     expect(screen.queryByText('Street Food Walk: An Thuong')).toBeNull();
     expect(screen.getByText('Da Nang Beach Social #001')).toBeTruthy();
   });
@@ -52,10 +52,10 @@ describe('Discover (Spec 002)', () => {
   test('active language filter shows its value in the chip label (S6, CR-8)', async () => {
     await render(<DiscoverScreen />);
     expect(await screen.findByText('Da Nang Beach Social #001')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Language' }));
-    await fireEvent.press(await screen.findByRole('button', { name: /Russian|Русский|RU/ }));
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Language' }));
+    await fireEvent.press(await screen.findByRole('checkbox', { name: /Russian|Русский|RU/ }));
     await fireEvent.press(screen.getByRole('button', { name: 'Apply' }));
-    expect(await screen.findByRole('button', { name: 'Language: RU' })).toBeTruthy();
+    expect(await screen.findByRole('checkbox', { name: 'Language: RU', checked: true })).toBeTruthy();
   });
 
   test('offline error with Retry, no raw error text (S18)', async () => {

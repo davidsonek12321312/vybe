@@ -43,8 +43,10 @@ export function Chip({
 }) {
   return (
     <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
+      // A toggle: role checkbox + checked (aria-checked on web). `selected` on a
+      // button becomes an invalid aria-selected there (review CR-7).
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: selected }}
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
       onPress={onPress}
