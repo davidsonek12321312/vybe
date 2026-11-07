@@ -6,6 +6,8 @@ import process from 'node:process';
 
 const ROOT = 'dist';
 const SECRET_KEY = /sb_secret_[A-Za-z0-9_-]{20,}/;
+const ACCESS_TOKEN = /sbp_[a-f0-9]{40}/;
+const DB_URL = /postgres(?:ql)?:\/\/[^:\s/]+:[^@\s]{6,}@/;
 const JWT = /eyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]+/g;
 
 function* files(dir) {
@@ -32,6 +34,8 @@ for (const path of files(ROOT)) {
   scanned += 1;
   const text = readFileSync(path, 'utf8');
   if (SECRET_KEY.test(text)) findings.push(`${path}: Supabase secret key`);
+  if (ACCESS_TOKEN.test(text)) findings.push(`${path}: Supabase access token`);
+  if (DB_URL.test(text)) findings.push(`${path}: database URL with password`);
   for (const match of text.matchAll(JWT)) {
     if (isServiceRole(match[0])) findings.push(`${path}: service-role JWT`);
   }
