@@ -146,7 +146,7 @@ export function EventDetailScreen({
               {event.cancellationNote ? <AppText tone="secondary">{event.cancellationNote}</AppText> : null}
             </View>
           ) : null}
-          {ended && event.status !== 'cancelled' ? (
+          {ended ? (
             <View style={[styles.banner, styles.bannerNeutral]} accessibilityRole="alert">
               <AppText variant="subheading">{t('status.ended')}</AppText>
             </View>
@@ -156,7 +156,7 @@ export function EventDetailScreen({
               <AppText variant="subheading" tone="warning">
                 {t('status.updatedAt', { when: formatStamp(event.materialChangedAt, locale, timeZone) })}
               </AppText>
-              {event.changeNote ? <AppText tone="secondary">{event.changeNote}</AppText> : null}
+              <AppText tone="secondary">{event.changeNote || t('status.detailsChanged')}</AppText>
             </View>
           ) : null}
 

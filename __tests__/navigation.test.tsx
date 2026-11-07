@@ -108,6 +108,38 @@ describe('Event details (Spec 002)', () => {
     expect(screen.queryByText('Register ↗')).toBeNull();
   });
 
+  test('cancelled event that has also ended shows both banners (CR-11a)', async () => {
+    const event = liveEvent({
+      status: 'cancelled',
+      cancellationNote: 'Storm warning',
+      startsAt: new Date(Date.now() - 4 * 3600_000),
+      endsAt: new Date(Date.now() - 2 * 3600_000),
+    });
+    await render(<EventDetailScreen slug={event.slug} initialEvent={event} context={live({ listUpcoming: async () => [], getBySlug: async () => event })} />);
+    expect(screen.getByText('Storm warning')).toBeTruthy();
+    expect(screen.getByText('Event has ended')).toBeTruthy();
+  });
+
+  test('ended published event shows the ended banner and no Register (S8)', async () => {
+    const event = liveEvent({ startsAt: new Date(Date.now() - 4 * 3600_000), endsAt: new Date(Date.now() - 2 * 3600_000) });
+    await render(<EventDetailScreen slug={event.slug} initialEvent={event} context={live({ listUpcoming: async () => [], getBySlug: async () => event })} />);
+    expect(screen.getByText('Event has ended')).toBeTruthy();
+    expect(screen.queryByText('Register ↗')).toBeNull();
+  });
+
+  test('updated event shows the change note, or a generic line without one (S9, CR-11b)', async () => {
+    const changedAt = new Date(Date.now() - 3600_000);
+    const future = { startsAt: new Date(Date.now() + 48 * 3600_000), endsAt: new Date(Date.now() + 51 * 3600_000) };
+    const withNote = liveEvent({ ...future, materialChangedAt: changedAt, changeNote: 'Moved to the north beach' });
+    const first = await render(<EventDetailScreen slug={withNote.slug} initialEvent={withNote} context={live({ listUpcoming: async () => [], getBySlug: async () => withNote })} />);
+    expect(screen.getByText('Moved to the north beach')).toBeTruthy();
+    await first.unmount();
+
+    const noNote = liveEvent({ ...future, materialChangedAt: changedAt, changeNote: null });
+    await render(<EventDetailScreen slug={noNote.slug} initialEvent={noNote} context={live({ listUpcoming: async () => [], getBySlug: async () => noNote })} />);
+    expect(screen.getByText('Details changed')).toBeTruthy();
+  });
+
   test('unknown slug → Event not available (S11)', async () => {
     const repository: EventRepository = { listUpcoming: async () => [], getBySlug: async () => null };
     await render(<EventDetailScreen slug="does-not-exist" context={live(repository)} />);

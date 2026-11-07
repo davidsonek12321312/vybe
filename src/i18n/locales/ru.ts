@@ -85,6 +85,7 @@ const ru: LocaleShape = {
     ended: 'Событие завершилось',
     updated: 'Обновлено',
     updatedAt: 'Обновлено %{when}',
+    detailsChanged: 'Детали изменились',
     happeningNow: 'Идёт сейчас',
     sample: 'Пример события, не настоящее',
   },

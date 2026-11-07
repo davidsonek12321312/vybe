@@ -85,6 +85,7 @@ const vi: LocaleShape = {
     ended: 'Sự kiện đã kết thúc',
     updated: 'Đã cập nhật',
     updatedAt: 'Đã cập nhật %{when}',
+    detailsChanged: 'Thông tin đã thay đổi',
     happeningNow: 'Đang diễn ra',
     sample: 'Sự kiện mẫu, không có thật',
   },

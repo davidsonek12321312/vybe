@@ -84,6 +84,7 @@ const en = {
     ended: 'Event has ended',
     updated: 'Updated',
     updatedAt: 'Updated %{when}',
+    detailsChanged: 'Details changed',
     happeningNow: 'Happening now',
     sample: 'Sample event, not real',
   },
