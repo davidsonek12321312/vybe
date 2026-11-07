@@ -306,6 +306,7 @@ returns `null` and the screen loads through `EventRepository`; web uses
 | 0.4 (review) | 2026-11-06 | Claude Code | Consistency review: `registration_url` column and tests (tasks 5, 8); `RegisterButton` and S34 (task 18); events of inactive cities unreadable. Still DRAFT |
 | 0.4 (approval) | 2026-11-06 | Claude Code (recording only) | Approved by the CEO on 2026-11-06; implementation authorized on `feature/spec-002-event-discovery` (local disposable database only) |
 | 0.4 (progress) | 2026-11-06 | Claude Code (recording only) | Implementation evidence, D22 and D23 decisions recorded; no scope change |
+| 0.5 (amendment) | 2026-11-07 | Claude Code (recording only) | CEO-approved amendment recorded in `amendment-v0.5.md`: A11 security headers (AR1) and REQ-037 unknown-value fallback (AR3) |
 
 **This document is APPROVED (v0.4, CEO, 2026-11-06). Any change requires a
 spec amendment with a new version and fresh CEO approval.**
