@@ -51,7 +51,14 @@ export async function loader(request: Request | undefined, params: RouteParams):
 }
 
 export async function generateMetadata(_request: unknown, params: RouteParams): Promise<Metadata> {
-  const event = await loadEventForRoute(slugFrom(params)).catch(() => null);
+  let event: EventDetail | null;
+  try {
+    event = await loadEventForRoute(slugFrom(params));
+  } catch {
+    // Lookup failed (not "missing"): neutral metadata, so messengers do not cache
+    // an "Event not available" preview for a real event (review CR-4, REQ-020).
+    return { title: 'MOVA' };
+  }
   if (!event) {
     return { title: `${t('states.notAvailableTitle')} · MOVA`, robots: { index: false } };
   }

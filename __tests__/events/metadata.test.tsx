@@ -37,3 +37,11 @@ test('unknown slug → "Event not available" title and noindex', async () => {
   expect(html).toContain('<title>Event not available · MOVA</title>');
   expect(html).toMatch(/<meta name="robots" content="noindex/);
 });
+
+test('lookup failure → neutral MOVA title, no "not available" preview and no noindex (CR-4)', async () => {
+  jest.spyOn(routeData, 'loadEventForRoute').mockRejectedValue(new Error('boom'));
+  const html = await renderHead('some-event');
+  expect(html).toContain('<title>MOVA</title>');
+  expect(html).not.toContain('not available');
+  expect(html).not.toMatch(/noindex/);
+});
