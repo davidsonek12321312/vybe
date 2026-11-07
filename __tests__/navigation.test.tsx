@@ -1,74 +1,192 @@
 /**
- * Navigation smoke tests — REQ-002, REQ-003
- *
- * Verifies that:
- * - HomeScreen renders without throwing
- * - NotFoundScreen renders without throwing
- * - NotFoundScreen contains a link to "/"
- *
- * Screen components are tested in isolation; Expo Router and native
- * dependencies are mocked.
+ * Screen tests — Spec 001 REQ-002, REQ-003; Spec 002 S1, S11, S12, S16, S18,
+ * S21, S24, S34. Native modules are mocked in jest.setup.js.
  */
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
-// expo-localization is mocked globally in jest.setup.js
-
-// Mock expo-router — factory must not reference out-of-scope variables
-jest.mock('expo-router', () => ({
-  Link: 'Link',
-  Stack: {
-    Screen: 'Stack.Screen',
-  },
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
-}));
-
-// Mock expo-splash-screen
-jest.mock('expo-splash-screen', () => ({
-  preventAutoHideAsync: jest.fn(),
-  hideAsync: jest.fn(),
-}));
-
-// Mock react-native-safe-area-context
-jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaView: 'SafeAreaView',
-  useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 0, left: 0 }),
-  SafeAreaProvider: 'SafeAreaProvider',
-}));
-
-import React from 'react';
-import { render } from '@testing-library/react-native';
-import HomeScreen from '../src/app/index';
 import NotFoundScreen from '../src/app/+not-found';
+import type { AppContext } from '../src/features/events/repository';
+import { buildSampleEvents } from '../src/features/events/sample-events';
+import { DiscoverScreen } from '../src/features/events/screens/DiscoverScreen';
+import { EventDetailScreen } from '../src/features/events/screens/EventDetailScreen';
+import { LoadError, type EventDetail, type EventRepository } from '../src/features/events/types';
+import { resetEventCaches } from '../src/features/events/use-events';
+import { ConfigError } from '../src/config/env';
 
-describe('HomeScreen', () => {
-  test('renders without throwing (REQ-002)', () => {
-    expect(() => render(<HomeScreen />)).not.toThrow();
+const LIVE_CONFIG = {
+  source: 'supabase' as const,
+  defaultCity: 'da-nang',
+  siteUrl: 'https://mova.example',
+  supabaseUrl: 'https://vozitoaqntixingqwuiw.supabase.co',
+  publishableKey: 'sb_publishable_test_key_value',
+};
+
+function live(repository: EventRepository): AppContext {
+  return { ok: true, config: LIVE_CONFIG, repository };
+}
+
+function liveEvent(patch: Partial<EventDetail> = {}): EventDetail {
+  const sample = buildSampleEvents(new Date()).find((e) => e.slug === 'beach-social-001') as EventDetail;
+  return { ...sample, isSample: false, registrationUrl: 'https://forms.gle/abc123', ...patch };
+}
+
+beforeEach(() => resetEventCaches());
+
+describe('Discover (Spec 002)', () => {
+  test('lists sample events with the sample label and banner (S1, S21)', async () => {
+    await render(<DiscoverScreen />);
+    expect(await screen.findByText('Da Nang Beach Social #001')).toBeTruthy();
+    expect(screen.getByText('Preview: these are sample events, not real ones.')).toBeTruthy();
+    expect(screen.getAllByText('Sample event, not real').length).toBeGreaterThan(0);
+    expect(screen.getByText("What's on in Da Nang")).toBeTruthy();
   });
 
-  test('renders the app title', () => {
-    const { getByText } = render(<HomeScreen />);
-    expect(getByText('Welcome to Vybe')).toBeTruthy();
+  test('the Solo-friendly chip keeps only solo-friendly events (REQ-026)', async () => {
+    await render(<DiscoverScreen />);
+    expect(await screen.findByText('Street Food Walk: An Thuong')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('checkbox', { name: 'Solo-friendly' }));
+    expect(screen.queryByText('Street Food Walk: An Thuong')).toBeNull();
+    expect(screen.getByText('Da Nang Beach Social #001')).toBeTruthy();
   });
 
-  test('shows the coming-soon message and no event, RSVP or sample content (REQ-005)', () => {
-    const { getByText, queryByText } = render(<HomeScreen />);
-    expect(getByText('Events in Da Nang are coming soon.')).toBeTruthy();
-    expect(queryByText(/rsvp|book|sample|attend/i)).toBeNull();
+  test('active language filter shows its value in the chip label (S6, CR-8)', async () => {
+    await render(<DiscoverScreen />);
+    expect(await screen.findByText('Da Nang Beach Social #001')).toBeTruthy();
+    // The chip opens a sheet, so it is a button; its name carries the value (WCAG 4.1.2, NFR-002).
+    await fireEvent.press(screen.getByRole('button', { name: 'Language' }));
+    await fireEvent.press(await screen.findByRole('checkbox', { name: /Russian|Русский|RU/ }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Apply' }));
+    expect(await screen.findByRole('button', { name: 'Language: RU' })).toBeTruthy();
+  });
+
+  test('offline error with Retry, no raw error text (S18)', async () => {
+    const repository: EventRepository = {
+      listUpcoming: () => Promise.reject(new LoadError('offline')),
+      getBySlug: () => Promise.resolve(null),
+    };
+    await render(<DiscoverScreen context={live(repository)} />);
+    expect(await screen.findByText("You're offline")).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
+    expect(screen.queryByText(/LoadError|undefined|null/)).toBeNull();
+  });
+
+  test('no events → no-events message, no sample events (REQ-033)', async () => {
+    const repository: EventRepository = { listUpcoming: () => Promise.resolve([]), getBySlug: () => Promise.resolve(null) };
+    await render(<DiscoverScreen context={live(repository)} />);
+    expect(await screen.findByText('No upcoming events yet')).toBeTruthy();
+    expect(screen.queryByText('Sample event, not real')).toBeNull();
+  });
+
+  test('invalid configuration → Service unavailable, no sample fallback (S24)', async () => {
+    await render(<DiscoverScreen context={{ ok: false, error: new ConfigError('missing_url') }} />);
+    expect(await screen.findByText('Service unavailable')).toBeTruthy();
+    expect(screen.queryByText('Da Nang Beach Social #001')).toBeNull();
   });
 });
 
-describe('NotFoundScreen', () => {
-  test('renders without throwing (REQ-003)', () => {
-    expect(() => render(<NotFoundScreen />)).not.toThrow();
+describe('Event details (Spec 002)', () => {
+  test('sample event: venue to be confirmed, solo section, no Register (S12, S16, S21)', async () => {
+    const sample = buildSampleEvents(new Date()).find((e) => e.slug === 'beach-social-001') as EventDetail;
+    await render(<EventDetailScreen slug="beach-social-001" initialEvent={sample} />);
+    expect(screen.getByText('Venue to be confirmed')).toBeTruthy();
+    expect(screen.getByText('Coming alone?')).toBeTruthy();
+    expect(screen.queryByText('Register ↗')).toBeNull();
+    expect(screen.queryByText('Open in Maps')).toBeNull();
   });
 
-  test('renders the not-found title', () => {
-    const { getByText } = render(<NotFoundScreen />);
-    expect(getByText('Page not found')).toBeTruthy();
+  test('published live event with a form shows Register (S34)', async () => {
+    const event = liveEvent();
+    await render(<EventDetailScreen slug={event.slug} initialEvent={event} context={live({ listUpcoming: async () => [], getBySlug: async () => event })} />);
+    expect(screen.getByRole('link', { name: 'Register ↗' })).toBeTruthy();
+    expect(screen.getByText('Opens a MOVA team form outside the app')).toBeTruthy();
   });
 
-  test('contains a "Go to home" link element (REQ-003)', () => {
-    const { getByLabelText } = render(<NotFoundScreen />);
-    // The Link renders with accessibilityLabel="Go to home" (from i18n key)
-    expect(getByLabelText('Go to home')).toBeTruthy();
+  test('cancelled event shows the banner and hides Register (S7, S34)', async () => {
+    const event = liveEvent({ status: 'cancelled', cancellationNote: 'Storm warning' });
+    await render(<EventDetailScreen slug={event.slug} initialEvent={event} context={live({ listUpcoming: async () => [], getBySlug: async () => event })} />);
+    expect(screen.getAllByText('Cancelled').length).toBeGreaterThan(0);
+    expect(screen.getByText('Storm warning')).toBeTruthy();
+    expect(screen.queryByText('Register ↗')).toBeNull();
+  });
+
+  test('cancelled event that has also ended shows both banners (CR-11a)', async () => {
+    const event = liveEvent({
+      status: 'cancelled',
+      cancellationNote: 'Storm warning',
+      startsAt: new Date(Date.now() - 4 * 3600_000),
+      endsAt: new Date(Date.now() - 2 * 3600_000),
+    });
+    await render(<EventDetailScreen slug={event.slug} initialEvent={event} context={live({ listUpcoming: async () => [], getBySlug: async () => event })} />);
+    expect(screen.getByText('Storm warning')).toBeTruthy();
+    expect(screen.getByText('Event has ended')).toBeTruthy();
+  });
+
+  test('ended published event shows the ended banner and no Register (S8)', async () => {
+    const event = liveEvent({ startsAt: new Date(Date.now() - 4 * 3600_000), endsAt: new Date(Date.now() - 2 * 3600_000) });
+    await render(<EventDetailScreen slug={event.slug} initialEvent={event} context={live({ listUpcoming: async () => [], getBySlug: async () => event })} />);
+    expect(screen.getByText('Event has ended')).toBeTruthy();
+    expect(screen.queryByText('Register ↗')).toBeNull();
+  });
+
+  test('updated event shows the change note, or a generic line without one (S9, CR-11b)', async () => {
+    const changedAt = new Date(Date.now() - 3600_000);
+    const future = { startsAt: new Date(Date.now() + 48 * 3600_000), endsAt: new Date(Date.now() + 51 * 3600_000) };
+    const withNote = liveEvent({ ...future, materialChangedAt: changedAt, changeNote: 'Moved to the north beach' });
+    const first = await render(<EventDetailScreen slug={withNote.slug} initialEvent={withNote} context={live({ listUpcoming: async () => [], getBySlug: async () => withNote })} />);
+    expect(screen.getByText('Moved to the north beach')).toBeTruthy();
+    await first.unmount();
+
+    const noNote = liveEvent({ ...future, materialChangedAt: changedAt, changeNote: null });
+    await render(<EventDetailScreen slug={noNote.slug} initialEvent={noNote} context={live({ listUpcoming: async () => [], getBySlug: async () => noNote })} />);
+    expect(screen.getByText('Details changed')).toBeTruthy();
+  });
+
+  test('unknown slug → Event not available (S11)', async () => {
+    const repository: EventRepository = { listUpcoming: async () => [], getBySlug: async () => null };
+    await render(<EventDetailScreen slug="does-not-exist" context={live(repository)} />);
+    expect(await screen.findByText('Event not available')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Back to events' })).toBeTruthy();
+  });
+
+  test('server already found nothing → not available without another request (S11, D22)', async () => {
+    const getBySlug = jest.fn(async () => null);
+    await render(
+      <EventDetailScreen slug="does-not-exist" initiallyNotAvailable context={live({ listUpcoming: async () => [], getBySlug })} />,
+    );
+    expect(screen.getByText('Event not available')).toBeTruthy();
+    expect(getBySlug).not.toHaveBeenCalled();
+  });
+});
+
+describe('Event details with only a cached summary (review CR-2, REQ-032/035, S18)', () => {
+  test('detail fetch fails → partial view stays, with an error banner and Retry', async () => {
+    const event = liveEvent();
+    const getBySlug = jest
+      .fn<Promise<EventDetail | null>, [string]>()
+      .mockRejectedValueOnce(new LoadError('offline'))
+      .mockResolvedValue(event);
+    const repository: EventRepository = { listUpcoming: async () => [event], getBySlug };
+    const list = await render(<DiscoverScreen context={live(repository)} />);
+    expect(await screen.findByText(event.title)).toBeTruthy();
+    await list.unmount();
+
+    await render(<EventDetailScreen slug={event.slug} context={live(repository)} />);
+    expect(await screen.findByText("You're offline")).toBeTruthy();
+    expect(screen.getAllByText(event.title).length).toBeGreaterThan(0);
+    await fireEvent.press(screen.getByRole('button', { name: 'Retry' }));
+    await waitFor(() => expect(screen.queryByText("You're offline")).toBeNull());
+    expect(getBySlug).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('NotFoundScreen (Spec 001 REQ-003)', () => {
+  test('renders the not-found title', async () => {
+    await render(<NotFoundScreen />);
+    expect(screen.getByText('Page not found')).toBeTruthy();
+  });
+
+  test('contains a "Go to home" link element', async () => {
+    await render(<NotFoundScreen />);
+    expect(screen.getByLabelText('Go to home')).toBeTruthy();
   });
 });

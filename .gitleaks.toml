@@ -1,9 +1,9 @@
-# Gitleaks configuration for Vybe (Spec 001 REQ-008, NFR-002; ADR-0007)
+# Gitleaks configuration for MOVA (Spec 001 REQ-008, NFR-002; ADR-0007)
 # Local:  npm run scan:secrets          (working tree)
 #         npm run scan:secrets:history  (git history)
 # CI:     .github/workflows/ci.yml, job "secrets"
 
-title = "vybe"
+title = "mova"
 
 [extend]
 # Start from the full upstream gitleaks rule set.
@@ -18,10 +18,29 @@ description = "Supabase secret API key (sb_secret_...)"
 regex = '''sb_secret_[A-Za-z0-9_\-]{20,}'''
 keywords = ["sb_secret_"]
 
+[[rules]]
+id = "supabase-access-token"
+description = "Supabase personal access token (sbp_...)"
+regex = '''sbp_[a-f0-9]{40}'''
+keywords = ["sbp_"]
+
+[[rules]]
+id = "postgres-url-with-password"
+description = "Postgres connection URL with an embedded password"
+regex = '''postgres(?:ql)?://[^:\s/]+:[^@\s]{6,}@'''
+keywords = ["postgres://", "postgresql://"]
+
+# Publishable keys are public by design (they ship in every client), so the
+# generic rules must not flag them, e.g. in a local .env.local.
+[[allowlists]]
+description = "Supabase publishable keys"
+regexes = ['''^sb_publishable_[A-Za-z0-9_\-]{10,}$''']
+
 # Generated output and third-party code are not scanned.
 [[allowlists]]
 description = "Generated, vendored and VCS directories"
 paths = [
+  '''(^|[\\/])\.omc[\\/]''',
   '''(^|[\\/])node_modules[\\/]''',
   '''(^|[\\/])dist[\\/]''',
   '''(^|[\\/])web-build[\\/]''',

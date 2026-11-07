@@ -1,78 +1,63 @@
 /**
- * Not-found screen — fallback for all unrecognised routes
- * REQ-003, REQ-007
- *
- * Renders a user-facing message and a link back to "/" for any path that
- * does not match a defined route. Must meet WCAG 2.1 AA accessibility.
+ * Not-found fallback — Spec 001 REQ-003, REQ-007; Spec 002 REQ-047 (HTTP 404
+ * on the server build). Localized, with an accessible 44 pt link home.
  */
-import { Link, Stack } from 'expo-router';
-import { StyleSheet, useColorScheme } from 'react-native';
+import { Link } from 'expo-router';
+import type { Metadata } from 'expo-server';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { AppText } from '@/design/primitives';
+import { MIN_TOUCH, colors, radii, spacing, typography } from '@/design/tokens';
 import { t } from '@/i18n';
-import { VybeColors } from '@/theme';
+
+export function generateMetadata(): Metadata {
+  return { title: `${t('notFound.title')} · MOVA` };
+}
 
 export default function NotFoundScreen(): React.JSX.Element {
-  const scheme = useColorScheme();
-  const colors = VybeColors[scheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <>
-      <Stack.Screen options={{ title: t('notFound.title') }} />
-      <ThemedView style={styles.container}>
-        <SafeAreaView style={styles.safeArea}>
-          <ThemedText
-            type="title"
-            style={[styles.title, { color: colors.text }]}
-            accessibilityRole="header">
-            {t('notFound.title')}
-          </ThemedText>
-          <ThemedText style={{ color: colors.textSecondary }}>
-            {t('notFound.body')}
-          </ThemedText>
-          {/*
-           * Link back to home — REQ-003 (typed route), REQ-007 (accessibility)
-           * minHeight/minWidth: 44 satisfies WCAG 2.1 AA touch-target size.
-           * accessibilityLabel explicitly labels the action.
-           */}
-          <Link
-            href="/"
-            accessibilityLabel={t('notFound.goHome')}
-            accessibilityRole="link"
-            style={[styles.homeLink, { color: colors.linkText }]}>
-            {t('notFound.goHome')}
-          </Link>
-        </SafeAreaView>
-      </ThemedView>
-    </>
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.content}>
+        <AppText variant="title" accessibilityRole="header" style={styles.center}>
+          {t('notFound.title')}
+        </AppText>
+        <AppText tone="secondary" style={styles.center}>
+          {t('notFound.body')}
+        </AppText>
+        <Link href="/" accessibilityLabel={t('notFound.goHome')} accessibilityRole="link" style={styles.homeLink}>
+          {t('notFound.goHome')}
+        </Link>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
+    backgroundColor: colors.bg,
   },
-  safeArea: {
+  content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    gap: 16,
+    paddingHorizontal: spacing.xl,
+    gap: spacing.lg,
   },
-  title: {
+  center: {
     textAlign: 'center',
   },
   homeLink: {
-    fontSize: 16,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
-    minHeight: 44,
-    minWidth: 44,
-    textAlignVertical: 'center',
+    ...typography.subheading,
+    color: colors.onAccent,
+    backgroundColor: colors.accent,
+    borderRadius: radii.chip,
+    minHeight: MIN_TOUCH,
+    minWidth: MIN_TOUCH,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
     textAlign: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    overflow: 'hidden',
   },
 });

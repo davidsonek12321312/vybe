@@ -1,23 +1,12 @@
 /**
- * Localization per locale and English fallback — Spec 001 REQ-006, Scenario 5
- *
- * - Home and not-found render the EN, VI and RU strings selected by the harness
- * - A key missing from VI or RU shows English without crashing
- * - The missing key is reported in development (once per locale and key)
+ * Localization per locale and English fallback — Spec 001 REQ-006, Scenario 5;
+ * Spec 002 NFR-001. Native modules are mocked in jest.setup.js.
  */
-jest.mock('expo-router', () => ({
-  Link: 'Link',
-  Stack: { Screen: 'Stack.Screen' },
-}));
-
-jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaView: 'SafeAreaView',
-}));
-
-import { render } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react-native';
 
 import NotFoundScreen from '../src/app/+not-found';
-import HomeScreen from '../src/app/index';
+import { DiscoverScreen } from '../src/features/events/screens/DiscoverScreen';
+import { resetEventCaches } from '../src/features/events/use-events';
 import { createTranslator, setLocale, SUPPORTED_LOCALES, type Locale } from '../src/i18n';
 import en from '../src/i18n/locales/en';
 import ru from '../src/i18n/locales/ru';
@@ -27,44 +16,45 @@ const dictionaries = { en, vi, ru };
 
 afterEach(() => {
   setLocale('en');
+  resetEventCaches();
 });
 
-describe.each([...SUPPORTED_LOCALES])('shell screens in "%s" (REQ-006)', (locale: Locale) => {
-  test('home shows the locale strings', () => {
+describe.each([...SUPPORTED_LOCALES])('screens in "%s" (REQ-006)', (locale: Locale) => {
+  test('Discover shows the locale strings', async () => {
     setLocale(locale);
-    const { getByText } = render(<HomeScreen />);
-    expect(getByText(dictionaries[locale].home.title)).toBeTruthy();
-    expect(getByText(dictionaries[locale].home.comingSoon)).toBeTruthy();
+    await render(<DiscoverScreen />);
+    expect(screen.getByText(dictionaries[locale].discover.title)).toBeTruthy();
+    expect(await screen.findByText(dictionaries[locale].discover.sampleBanner)).toBeTruthy();
   });
 
-  test('not-found shows the locale strings', () => {
+  test('not-found shows the locale strings', async () => {
     setLocale(locale);
-    const { getByText, getByLabelText } = render(<NotFoundScreen />);
-    expect(getByText(dictionaries[locale].notFound.title)).toBeTruthy();
-    expect(getByLabelText(dictionaries[locale].notFound.goHome)).toBeTruthy();
+    await render(<NotFoundScreen />);
+    expect(screen.getByText(dictionaries[locale].notFound.title)).toBeTruthy();
+    expect(screen.getByLabelText(dictionaries[locale].notFound.goHome)).toBeTruthy();
   });
 });
 
 describe('English fallback (REQ-006, Scenario 5)', () => {
   const incomplete = {
     en,
-    vi: { ...vi, home: { title: vi.home.title } },
-    ru: { ...ru, home: {} },
+    vi: { ...vi, notFound: { title: vi.notFound.title } },
+    ru: { ...ru, notFound: {} },
   };
 
   test.each(['vi', 'ru'] as const)('a key missing in "%s" shows English and is reported', (locale) => {
     const report = jest.fn();
     const translator = createTranslator(incomplete, locale, report);
 
-    expect(translator.t('home.tagline')).toBe(en.home.tagline);
-    expect(report).toHaveBeenCalledWith(locale, 'home.tagline');
+    expect(translator.t('notFound.body')).toBe(en.notFound.body);
+    expect(report).toHaveBeenCalledWith(locale, 'notFound.body');
   });
 
   test('a key present in the active locale is used and not reported', () => {
     const report = jest.fn();
     const translator = createTranslator(incomplete, 'vi', report);
 
-    expect(translator.t('home.title')).toBe(vi.home.title);
+    expect(translator.t('notFound.title')).toBe(vi.notFound.title);
     expect(report).not.toHaveBeenCalled();
   });
 
@@ -72,11 +62,16 @@ describe('English fallback (REQ-006, Scenario 5)', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const translator = createTranslator(incomplete, 'ru');
 
-    translator.t('home.tagline');
-    translator.t('home.tagline');
+    translator.t('notFound.body');
+    translator.t('notFound.body');
 
     expect(warn).toHaveBeenCalledTimes(1);
-    expect(String(warn.mock.calls[0][0])).toContain('home.tagline');
+    expect(String(warn.mock.calls[0][0])).toContain('notFound.body');
     warn.mockRestore();
+  });
+
+  test('interpolation works in the fallback path', () => {
+    const translator = createTranslator({ en, vi: { ...vi, discover: {} }, ru }, 'vi', () => undefined);
+    expect(translator.t('discover.subtitle', { city: 'Da Nang' })).toBe("What's on in Da Nang");
   });
 });

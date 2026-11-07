@@ -57,10 +57,34 @@ describe('i18n locale completeness (REQ-006)', () => {
   });
 });
 
-describe('t() function (REQ-005)', () => {
-  test('t("home.comingSoon") returns a non-empty string', () => {
-    const result = t('home.comingSoon');
+describe('t() function', () => {
+  test('returns a non-empty string', () => {
+    const result = t('discover.title');
     expect(typeof result).toBe('string');
     expect(result.length).toBeGreaterThan(0);
+  });
+
+  test('interpolates parameters (Spec 002 NFR-001)', () => {
+    expect(t('discover.subtitle', { city: 'Da Nang' })).toBe("What's on in Da Nang");
+    expect(t('discover.count', { count: 4 })).toBe('Events: 4');
+  });
+});
+
+describe('i18n placeholders (CR-16)', () => {
+  const placeholders = (text: string) => [...text.matchAll(/%\{(\w+)\}/g)].map((m) => m[1]).sort();
+
+  test('VI and RU use the same %{placeholders} as EN for every key', () => {
+    const mismatched: string[] = [];
+    for (const section of Object.keys(enAny)) {
+      for (const [key, value] of Object.entries(enAny[section])) {
+        for (const [name, locale] of [['vi', viAny], ['ru', ruAny]] as const) {
+          const other = locale[section]?.[key];
+          if (typeof other === 'string' && placeholders(other).join() !== placeholders(value).join()) {
+            mismatched.push(`${name}:${section}.${key}`);
+          }
+        }
+      }
+    }
+    expect(mismatched).toEqual([]);
   });
 });

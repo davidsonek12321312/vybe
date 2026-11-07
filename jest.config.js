@@ -2,6 +2,8 @@
 module.exports = {
   preset: 'jest-expo',
   setupFiles: ['<rootDir>/jest.setup.js'],
+  // The first Discover render in a file is slow on a cold CI runner (5 s default timed out).
+  testTimeout: 20000,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     // CSS modules — not supported in Jest environment

@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Vybe",
-    "slug": "vybe",
+    "name": "MOVA",
+    "slug": "mova",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "vybe",
-    "userInterfaceStyle": "automatic",
+    "scheme": "mova",
+    "userInterfaceStyle": "dark",
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -20,15 +20,20 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "static",
+      "output": "server",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      ["expo-router", { "sitemap": false }],
+      [
+        "expo-router",
+        {
+          "sitemap": false
+        }
+      ],
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#0B0B10",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
@@ -37,8 +42,16 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["en", "vi", "ru"],
-            "android": ["en", "vi", "ru"]
+            "ios": [
+              "en",
+              "vi",
+              "ru"
+            ],
+            "android": [
+              "en",
+              "vi",
+              "ru"
+            ]
           }
         }
       ]
@@ -46,6 +59,7 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "backgroundColor": "#0B0B10"
   }
 }

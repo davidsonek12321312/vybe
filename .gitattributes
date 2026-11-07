@@ -1,2 +1,5 @@
 # Git hooks are shell scripts and must keep LF line endings on every platform.
 .githooks/* text eol=lf
+
+# Generated database types must keep LF so the CI drift check compares exactly.
+src/lib/database.types.ts text eol=lf
