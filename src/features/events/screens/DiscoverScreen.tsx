@@ -147,6 +147,7 @@ export function DiscoverScreen({ context = getAppContext() }: { context?: AppCon
               </AppText>
             )}
             stickySectionHeadersEnabled={false}
+            initialNumToRender={30}
             contentContainerStyle={styles.list}
             refreshControl={
               Platform.OS === 'web' ? undefined : (
