@@ -3,6 +3,9 @@
  * 048). A short cache lets loader() and generateMetadata() share one Data
  * API request per page render.
  */
+import { colors } from '@/design/tokens';
+import { getActiveLocale } from '@/i18n';
+
 import { getAppContext } from './repository';
 import { LoadError, type EventDetail } from './types';
 
@@ -97,6 +100,6 @@ function escapeHtml(value: string): string {
  * fails on any non-2xx status.
  */
 export function notAvailableResponse(text: { title: string; body: string; back: string }): Response {
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${escapeHtml(text.title)} · MOVA</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0B0B10;color:#F5F5F7;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center;padding:24px}main{max-width:420px}h1{font-size:22px;margin:0 0 12px}p{color:#A8A8B3;margin:0 0 24px;line-height:1.5}a{display:inline-block;background:#9D8CFF;color:#0B0B10;text-decoration:none;font-weight:600;padding:14px 24px;border-radius:12px}</style></head><body><main><h1>${escapeHtml(text.title)}</h1><p>${escapeHtml(text.body)}</p><a href="/">${escapeHtml(text.back)}</a></main></body></html>`;
+  const html = `<!doctype html><html lang="${getActiveLocale()}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${escapeHtml(text.title)} · MOVA</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:${colors.bg};color:${colors.text};font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center;padding:24px}main{max-width:420px}h1{font-size:22px;margin:0 0 12px}p{color:${colors.textSecondary};margin:0 0 24px;line-height:1.5}a{display:inline-block;background:${colors.accent};color:${colors.onAccent};text-decoration:none;font-weight:600;padding:14px 24px;border-radius:12px}</style></head><body><main><h1>${escapeHtml(text.title)}</h1><p>${escapeHtml(text.body)}</p><a href="/">${escapeHtml(text.back)}</a></main></body></html>`;
   return new Response(html, { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 }

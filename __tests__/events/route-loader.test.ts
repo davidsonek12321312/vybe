@@ -50,6 +50,8 @@ describe('loader', () => {
       const html = await response.text();
       expect(html).toContain('Event not available');
       expect(html).toContain('noindex');
+      expect(html).toContain('<html lang="en">'); // active locale (CR-13)
+      expect(html).toContain('background:#0B0B10'); // design token, not a copy
     } finally {
       global.__DEV__ = previous;
     }
