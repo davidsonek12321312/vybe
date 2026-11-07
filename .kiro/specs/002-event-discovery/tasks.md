@@ -328,6 +328,7 @@ Recording only. Full findings, severities and commit ids:
 | 0.5 (amendment) | 2026-11-07 | Claude Code (recording only) | CEO-approved amendment recorded in `amendment-v0.5.md`: A11 security headers (AR1) and REQ-037 unknown-value fallback (AR3) |
 | 0.5 (review) | 2026-11-07 | Claude Code (recording only) | Independent review outcome, fixes and verification evidence recorded; no scope change |
 | 0.6 (amendment) | 2026-11-07 | Claude Code (recording only) | CEO-approved visual redesign recorded in `amendment-v0.6.md`: A12 Afterglow direction (replaces A4/D21), A13 image policy, A14 browser acceptance; no behaviour change |
+| 0.7 (amendment) | 2026-11-07 | Claude Code (recording only) | CEO reference design recorded in `amendment-v0.7.md`: A15 palette and tab bar (replaces Afterglow palette), A16 out-of-scope items, A17 acceptance; no behaviour change |
 
 **This document is APPROVED (v0.4, CEO, 2026-11-06). Any change requires a
 spec amendment with a new version and fresh CEO approval.**

@@ -1,32 +1,33 @@
 /**
- * MOVA "Afterglow" dark design tokens — design-lab prototype (design/mova-ui-lab).
- * A warm night ground and a sunset-coral accent replace the Spec 002 A4
- * violet palette; shipping it needs a D21 palette amendment (see
- * design-lab/DESIGN_REVIEW.md). Every text/background pair in TEXT_PAIRS is
+ * MOVA dark design tokens, amendment v0.7 (CEO reference design): near-black
+ * ground, white pill actions, one red signal colour. Replaces the Afterglow
+ * coral palette of amendment v0.6. Every text/background pair in TEXT_PAIRS is
  * checked at >= 4.5:1 by __tests__/events/data.test.ts.
  */
 export const colors = {
-  bg: '#0E0C0B',
-  surface: '#181513',
-  raised: '#231F1C',
-  border: '#332E2A',
-  borderStrong: '#4A433D',
-  text: '#F8F4EF',
-  textSecondary: '#B9B0A6',
-  /** Afterglow coral: brand, primary actions, active filters. */
-  accent: '#FF7A59',
-  onAccent: '#1A0B06',
-  /** Tinted ground for accent text (selected rows, the solo card). */
-  accentSoft: '#2E1A14',
+  bg: '#0B0B0C',
+  surface: '#151618',
+  raised: '#202226',
+  border: '#2C2E33',
+  borderStrong: '#4B4E55',
+  text: '#FFFFFF',
+  textSecondary: '#A7AAB2',
+  /** White: primary pill actions, active filters and the active tab. */
+  accent: '#FFFFFF',
+  onAccent: '#0B0B0C',
+  /** Tinted ground for highlighted rows. */
+  accentSoft: '#25272C',
+  /** Red signal: badges, unread dots, live and like. Never body text. */
+  signal: '#FF2D55',
   /** Sea glass: the Solo-friendly signal. */
   sea: '#5CD6C5',
   seaSoft: '#12292A',
   success: '#5EE38F',
   warning: '#FFC24B',
   danger: '#FF6B6B',
-  scrim: 'rgba(8, 6, 5, 0.78)',
+  scrim: 'rgba(5, 5, 6, 0.78)',
   /** Chips laid on photographs: opaque enough for AA white text over a white photo. */
-  glass: 'rgba(14, 12, 11, 0.84)',
+  glass: 'rgba(11, 11, 12, 0.84)',
 } as const;
 
 export type ColorToken = keyof typeof colors;

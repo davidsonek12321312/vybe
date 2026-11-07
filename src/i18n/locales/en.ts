@@ -123,6 +123,14 @@ const en = {
     notAvailableTitle: 'Event not available',
     notAvailableBody: 'This event does not exist or is no longer public.',
   },
+  tabs: {
+    discover: 'Discover',
+    events: 'Events',
+    create: 'Create',
+    people: 'People',
+    chat: 'Chat',
+    soon: 'coming soon',
+  },
   meta: {
     siteTitle: 'MOVA — Discover events in %{city}',
     siteDescription: 'Find real events and meet people in %{city}. Free to browse, no account needed.',

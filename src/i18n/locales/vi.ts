@@ -124,6 +124,14 @@ const vi: LocaleShape = {
     notAvailableTitle: 'Sự kiện không khả dụng',
     notAvailableBody: 'Sự kiện này không tồn tại hoặc không còn công khai.',
   },
+  tabs: {
+    discover: 'Khám phá',
+    events: 'Sự kiện',
+    create: 'Tạo',
+    people: 'Mọi người',
+    chat: 'Trò chuyện',
+    soon: 'sắp ra mắt',
+  },
   meta: {
     siteTitle: 'MOVA — Khám phá sự kiện tại %{city}',
     siteDescription: 'Tìm sự kiện thật và gặp gỡ mọi người tại %{city}. Xem miễn phí, không cần tài khoản.',

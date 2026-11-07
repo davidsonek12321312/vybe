@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PinIcon, SunMark } from '@/design/icons';
 import { useLayoutMode, type LayoutMode } from '@/design/layout';
+import { TabBar } from '@/design/TabBar';
 import { webTransition, type InteractionState } from '@/design/motion';
 import { AppText, focusRing, headingProps } from '@/design/primitives';
 import { colors, radii, spacing } from '@/design/tokens';
@@ -426,7 +427,9 @@ export function DiscoverScreen({ context = getAppContext() }: { context?: AppCon
           windowSize={7}
           refreshControl={refreshControl}
           contentContainerStyle={styles.page}
+          style={styles.list}
         />
+        <TabBar active="discover" />
       </SafeAreaView>
     );
   }
@@ -443,6 +446,7 @@ export function DiscoverScreen({ context = getAppContext() }: { context?: AppCon
 }
 
 const styles = StyleSheet.create({
+  list: { flex: 1 },
   screen: {
     flex: 1,
     backgroundColor: colors.bg,

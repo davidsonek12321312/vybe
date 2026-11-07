@@ -124,6 +124,14 @@ const ru: LocaleShape = {
     notAvailableTitle: 'Событие недоступно',
     notAvailableBody: 'Такого события нет или оно больше не публичное.',
   },
+  tabs: {
+    discover: 'Обзор',
+    events: 'События',
+    create: 'Создать',
+    people: 'Люди',
+    chat: 'Чат',
+    soon: 'скоро',
+  },
   meta: {
     siteTitle: 'MOVA — события: %{city}',
     siteDescription: 'Настоящие события и новые знакомства: %{city}. Смотреть бесплатно, без аккаунта.',
