@@ -42,6 +42,7 @@ export function createSupabaseRepository(client: SupabaseClient<Database>, optio
         .in('status', VISIBLE)
         .gt('ends_at', now.toISOString())
         .order('starts_at', { ascending: true })
+        .order('slug', { ascending: true }) // stable order for equal start times (CR-14a)
         .limit(200);
       if (signal) query = query.abortSignal(signal);
 

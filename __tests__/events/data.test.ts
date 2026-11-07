@@ -195,6 +195,7 @@ describe('Supabase repository (REQ-004, 017, 041, 051)', () => {
     // CR-3: ended events are excluded in the query, ordered by start, and bounded.
     expect(calls).toContainEqual(['gt', ['ends_at', '2026-12-01T00:00:00.000Z']]);
     expect(calls).toContainEqual(['order', ['starts_at', { ascending: true }]]);
+    expect(calls).toContainEqual(['order', ['slug', { ascending: true }]]);
     expect(calls).toContainEqual(['limit', [200]]);
   });
 
